@@ -1,18 +1,18 @@
 # Basil's Drones Inherit Items
-A Risk of Rain 2 mod that allows drones and turrets to inherit items from the player when purchased.
+A Risk of Rain 2 mod that allows drones and turrets to inherit items from the player when purchased or activated.
 
-# Installation
+**Now includes drones from the Back-up** 
+
+All drones and turrets are affected by this mod. It will only inherit the items from a player's inventory at the time of purchase or activation.
+
+## Installation
 1. Install [BepInEx Mod Pack](https://thunderstore.io/package/bbepis/BepInExPack/)
-3. Visit the [releases page](https://github.com/BasilPanda/RoR2DronesInheritItems/releases/)
-4. Download the latest DronesWithItems.dll
-5. Move DronesWithItems.dll to your \BepInEx\plugins folder
+2. Visit the [releases page](https://github.com/BasilPanda/RoR2DronesInheritItems/releases/)
+3. Download the latest DronesWithItems.dll
+4. Move DronesWithItems.dll to your \BepInEx\plugins folder
 
-# Ingame Proof
+## Ingame Examples
 
-This [video](https://www.youtube.com/watch?v=aDg-Q41yez8&feature=youtu.be) also contains 4x base drone attack speed and this was the outcome when it also inherited 20 Soldier Syringes.
+[Gunner Drones](https://www.youtube.com/watch?v=aDg-Q41yez8&feature=youtu.be) (also had 4x modded base drone attack speed)
 
-# FAQ
-
-Does this work with the Back-up drones?
-
-Currently no, but I'll try implementing that soon!
+[Back-up Drones](https://www.youtube.com/watch?v=vYXISaecv74&feature=youtu.be) (also had 4x modded base drone attack speed)
