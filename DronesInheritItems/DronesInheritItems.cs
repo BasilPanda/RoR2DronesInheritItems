@@ -10,298 +10,602 @@ using UnityEngine.Networking;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.0.0")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.1.0")]
     public class DroneWithItems : BaseUnityPlugin
     {
-        public static ConfigWrapper<int> ItemMultiplier;
+        public static ConfigWrapper<string> ItemMultiplier;
+        public static ConfigWrapper<bool> ItemRandomizer;
+        public static ConfigWrapper<bool> ItemGenerator;
+        public static ConfigWrapper<string> Tier1GenCap;
+        public static ConfigWrapper<string> Tier2GenCap;
+        public static ConfigWrapper<string> Tier3GenCap;
+        public static ConfigWrapper<string> LunarGenCap;
+        public static ConfigWrapper<string> Tier1GenChance;
+        public static ConfigWrapper<string> Tier2GenChance;
+        public static ConfigWrapper<string> Tier3GenChance;
+        public static ConfigWrapper<string> LunarGenChance;
+        public static ConfigWrapper<string> EquipGenChance;
+        public static ConfigWrapper<bool> LunarEquips;
         public static ConfigWrapper<bool> Tier1Items;
         public static ConfigWrapper<bool> Tier2Items;
         public static ConfigWrapper<bool> Tier3Items;
         public static ConfigWrapper<bool> LunarItems;
-        // public static ConfigWrapper<bool> EquipItems;
+        public static ConfigWrapper<bool> EquipItems;
         public static ConfigWrapper<bool> InheritDio;
+        public static ConfigWrapper<bool> InheritHappiestMask;
+        public static ConfigWrapper<bool> FixBackupDio;
+        public static ConfigWrapper<bool> DronesInherit;
+        public static ConfigWrapper<bool> BackupDronesInherit;
         public static ConfigWrapper<bool> QueenGuardInherit;
         public static ConfigWrapper<bool> GhostInherit;
-        public static ConfigWrapper<bool> InheritHappiestMask;
+
+        public static EquipmentIndex[] LunarEquipmentList = new EquipmentIndex[]
+        {
+            EquipmentIndex.Meteor,
+            EquipmentIndex.LunarPotion, // no idea what this is but it has lunar on it :D
+            EquipmentIndex.BurnNearby,
+            EquipmentIndex.CrippleWard,
+        };
 
         public void InitConfig()
         {
+            DronesInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "DronesInherit",
+                "Toggles BOTH purchasable drones and turrets to inherit items.",
+                true);
+
+            BackupDronesInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "BackupDronesInherit",
+                "Toggles Backup Drones to inherit items.",
+                true);
+
             ItemMultiplier = Config.Wrap(
-                "Settings",
+                "Base Inherit Settings",
                 "ItemMultiplier",
                 "Sets the multiplier for items to be multiplied by when the drones inherit them." +
-                "\nCurrently only able to multiple by integer values greater than or equal to 1.",
-                1);
+                "\nAble to handle decimal values now!",
+                "1");
+
+            ItemRandomizer = Config.Wrap(
+                "Base Inherit Settings",
+                "ItemRandomizer",
+                "Toggles random amounts of items to be inherited from the player's inventory.",
+                false
+                );
+
+            ItemGenerator = Config.Wrap(
+                "Generator Settings",
+                "ItemGenerator",
+                "Toggles generation of items instead of inheriting items from player's inventory. WILL IGNORE BASE INHERIT SETTINGS IF TRUE.",
+                false
+                );
+
+            Tier1GenCap = Config.Wrap(
+                "Generator Settings",
+                "Tier1GenCap",
+                "The multiplicative max item cap for generating Tier 1 (white) items.",
+                "4"
+                );
+
+            Tier2GenCap = Config.Wrap(
+                "Generator Settings",
+                "Tier2GenCap",
+                "The multiplicative max item cap for generating Tier 2 (green) items.",
+                "2"
+                );
+
+            Tier3GenCap = Config.Wrap(
+                "Generator Settings",
+                "Tier3GenCap",
+                "The multiplicative max item cap for generating Tier 3 (red) items.",
+                "1"
+                );
+
+            LunarGenCap = Config.Wrap(
+                "Generator Settings",
+                "LunarGenCap",
+                "The multiplicative max item cap for generating Lunar (blue) items.",
+                "1"
+                );
+
+            Tier1GenChance = Config.Wrap(
+                "Generator Settings",
+                "Tier1GenChance",
+                "The percent chance for generating a Tier 1 (white) item.",
+                "40"
+                );
+
+            Tier2GenChance = Config.Wrap(
+                "Generator Settings",
+                "Tier2GenChance",
+                "The percent chance for generating a Tier 2 (green) item.",
+                "20"
+                );
+
+            Tier3GenChance = Config.Wrap(
+                "Generator Settings",
+                "Tier3GenChance",
+                "The percent chance for generating a Tier 3 (red) item.",
+                "1"
+                );
+
+            LunarGenChance = Config.Wrap(
+                "Generator Settings",
+                "LunarGenChance",
+                "The percent chance for generating a Lunar (blue) item.",
+                "0.5"
+                );
+
+            EquipGenChance = Config.Wrap(
+                "Generator Settings",
+                "EquipGenChance",
+                "The percent chance for generating a Use item.",
+                "10"
+                );
 
             Tier1Items = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "Tier1Items",
-                "Toggles Tier 1 (white) items to be inherited.",
+                "Toggles Tier 1 (white) items to be inherited/generated.",
                 true);
 
             Tier2Items = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "Tier2Items",
-                "Toggles Tier 2 (green) items to be inherited.",
+                "Toggles Tier 2 (green) items to be inherited/generated.",
                 true);
 
             Tier3Items = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "Tier3Items",
-                "Toggles Tier 3 (red) items to be inherited.",
+                "Toggles Tier 3 (red) items to be inherited/generated.",
                 true);
 
             LunarItems = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "LunarItems",
-                "Toggles Lunar (blue) items to be inherited.",
+                "Toggles Lunar (blue) items to be inherited/generated.",
                 true);
             
-            /* 
-             * Mobs don't seem to use the equipments?
             EquipItems = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "EquipItems",
-                "Toggles Use items to be inherited.",
+                "Toggles Use items to be inherited/generated. ONLY WORKS FOR QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
                 false);
-            */
+
+            LunarEquips = Config.Wrap(
+                "General Settings",
+                "LunarEquips",
+                "Toggles Lunar Use items to be inherited/generated. ONLY WORKS FOR QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
+                false);
 
             InheritDio = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "InheritDio",
-                "Toggles Dio's Best Friend to be inherited.",
+                "Toggles Dio's Best Friend to be inherited/generated by ALL types.",
                 true);
 
             InheritHappiestMask = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "InheritHappiestMask",
-                "Toggles Happiest Mask to be inherited.",
+                "Toggles Happiest Mask to be inherited/generated by ALL types.",
+                true);
+
+            FixBackupDio = Config.Wrap(
+                "General Settings",
+                "FixBackupDio",
+                "Makes it so that Backup drones will reinherit the 25 second death timer upon Dio revive.",
                 true);
 
             QueenGuardInherit = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "QueenGuardInherit",
-                "Toggles Queen Guards to inherit items.",
+                "Toggles Queen Guards to inherit/generate items.",
                 false);
 
             GhostInherit = Config.Wrap(
-                "Settings",
+                "General Settings",
                 "GhostInherit",
-                "Toggles ghosts spawned from Happiest Mask to inherit items.\n" +
+                "Toggles ghosts spawned from Happiest Mask to inherit/generate items.\n" +
                 "Dev notice: If ghosts create other ghosts, damage for the new ghost will\nbe multiplied " +
                 "by 500% ON TOP of the original ghost 500% damage buff.\nThis cycle can continue non stop.",
                 false);
            
+        }
 
+        public static float ConfigToFloat(string configline)
+        {
+            if(float.TryParse(configline,out float x))
+            {
+                return x;
+            }
+            return 1f;
         }
 
         public void Awake()
         {
             InitConfig();
-            On.RoR2.SummonMasterBehavior.OpenSummon += (orig, self, activator) =>
-            {
-                if (!NetworkServer.active)
-                {
-                    Debug.LogWarning("[Server] function 'System.Void RoR2.SummonMasterBehavior::OpenSummon(RoR2.Interactor)' called on client");
-                    return;
-                }
-                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(self.masterPrefab, self.transform.position, self.transform.rotation);
-                CharacterBody component = activator.GetComponent<CharacterBody>();
-                CharacterMaster master = component.master;
-                CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
-                component2.teamIndex = TeamComponent.GetObjectTeam(component.gameObject);
-                Inventory component3 = gameObject.GetComponent<Inventory>();
-                /*
-                if (EquipItems.Value)
-                {
-                    if (master.inventory.GetEquipmentIndex() != EquipmentIndex.DroneBackup)
-                    {
-                        component3.CopyEquipmentFrom(master.inventory);
-                    }
-                }
-                */
-                component3.CopyItemsFrom(master.inventory);
-                checkConfig(component3);
-                NetworkServer.Spawn(gameObject);
-                component2.SpawnBody(component2.bodyPrefab, self.transform.position + Vector3.up * 0.8f, self.transform.rotation);
-                AIOwnership component4 = gameObject.GetComponent<AIOwnership>();
-                if (component4 && component && master)
-                {
-                    component4.ownerMaster = master;
-                }
-                BaseAI component5 = gameObject.GetComponent<BaseAI>();
-                if (component5)
-                {
-                    component5.leader.gameObject = activator.gameObject;
-                }
-                UnityEngine.Object.Destroy(self.gameObject);
-            };
 
-            On.RoR2.EquipmentSlot.SummonMaster += (orig, self, masterObjectPrefab, position) =>
-            {
-                if (!NetworkServer.active)
-                {
-                    Debug.LogWarning("[Server] function 'RoR2.CharacterMaster RoR2.EquipmentSlot::SummonMaster(UnityEngine.GameObject,UnityEngine.Vector3)' called on client");
-                    return null;
-                }
-                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(masterObjectPrefab, position, self.transform.rotation);
-                CharacterBody component = self.GetComponent<CharacterBody>();
-                CharacterMaster master = component.master;
-                CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
-                component2.teamIndex = TeamComponent.GetObjectTeam(component.gameObject);
-                Inventory component3 = gameObject.GetComponent<Inventory>();
-                /*
-                if (EquipItems.Value)
-                {
-                    if(master.inventory.GetEquipmentIndex() != EquipmentIndex.DroneBackup)
-                    {
-                        component3.CopyEquipmentFrom(master.inventory);
-                    }
-                }
-                */
-                component3.CopyItemsFrom(master.inventory);
-                checkConfig(component3);
-                NetworkServer.Spawn(gameObject);
-                component2.SpawnBody(component2.bodyPrefab, position, self.transform.rotation);
-                AIOwnership component4 = gameObject.GetComponent<AIOwnership>();
-                if (component4 && component && master)
-                {
-                    component4.ownerMaster = master;
-                }
-                BaseAI component5 = gameObject.GetComponent<BaseAI>();
-                if (component5)
-                {
-                    component5.leader.gameObject = self.gameObject;
-                }
-                return component2;
-            };
+            fixBackupDio();
 
+            baseDrones();
+            backupDrones();
             queensGuard();
             spookyGhosts();
-        }
+        }     
 
-        public static void checkConfig(Inventory inventory)
+        public static void checkConfig(Inventory inventory, CharacterMaster master)
         {
-            // Items that will never be used by the NPCs.
-            inventory.ResetItem(ItemIndex.TreasureCache);
-            inventory.ResetItem(ItemIndex.Feather);
-            inventory.ResetItem(ItemIndex.Firework);
-            inventory.ResetItem(ItemIndex.Talisman);
-            inventory.ResetItem(ItemIndex.SprintArmor);
-            inventory.ResetItem(ItemIndex.JumpBoost);
-            inventory.ResetItem(ItemIndex.GoldOnHit);
-            inventory.ResetItem(ItemIndex.WardOnLevel);
-            inventory.ResetItem(ItemIndex.BeetleGland);
-            inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
-
-            if (!Tier1Items.Value)
+            if (ItemGenerator.Value) // Using generator instead
             {
-                foreach (ItemIndex index in ItemCatalog.tier1ItemList)
-                {
-                    inventory.ResetItem(index);
-                }
-            }
-            if (!Tier2Items.Value)
-            {
-                foreach (ItemIndex index in ItemCatalog.tier2ItemList)
-                {
-                    inventory.ResetItem(index);
-                }
-            }
-            if (!Tier3Items.Value)
-            {
-                foreach (ItemIndex index in ItemCatalog.tier3ItemList)
-                {
-                    inventory.ResetItem(index);
-                }
-            }
-            if (!LunarItems.Value)
-            {
-                foreach (ItemIndex index in ItemCatalog.lunarItemList)
-                {
-                    inventory.ResetItem(index);
-                }
-            }
-            if (!InheritDio.Value)
-            {
-                inventory.ResetItem(ItemIndex.ExtraLife);
-            }
-            if (!InheritHappiestMask.Value)
-            {
-                inventory.ResetItem(ItemIndex.GhostOnKill);
-            }
-
-            if(ItemMultiplier.Value > 1)
-            {
-                int count = 0;
+                resetInventory(inventory);
+                int scc = Run.instance.stageClearCount;
                 if (Tier1Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier1ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (count * ItemMultiplier.Value));
+                        if (Util.CheckRoll(ConfigToFloat(Tier1GenCap.Value), master))
+                        {
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier1GenCap.Value) + 1)));
+                        }
                     }
                 }
                 if (Tier2Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier2ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (count * ItemMultiplier.Value));
+                        if (Util.CheckRoll(ConfigToFloat(Tier2GenCap.Value), master))
+                        {
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier2GenCap.Value) + 1)));
+                        }
                     }
                 }
                 if (Tier3Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier3ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (count * ItemMultiplier.Value));
+                        if (Util.CheckRoll(ConfigToFloat(Tier3GenCap.Value), master))
+                        {
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier3GenCap.Value) + 1)));
+                        }
                     }
                 }
                 if (LunarItems.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.lunarItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (count * ItemMultiplier.Value));
+                        if (Util.CheckRoll(ConfigToFloat(LunarGenCap.Value), master))
+                        {
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(LunarGenCap.Value) + 1)));
+                        }
                     }
-                }               
+                }
+                if (!InheritDio.Value)
+                {
+                    inventory.ResetItem(ItemIndex.ExtraLife);
+                }
+                if (!InheritHappiestMask.Value)
+                {
+                    inventory.ResetItem(ItemIndex.GhostOnKill);
+                }
+                if (EquipItems.Value)
+                {
+                    if(Util.CheckRoll(ConfigToFloat(EquipGenChance.Value), master))
+                    {
+                        inventory.ResetItem(ItemIndex.AutoCastEquipment);
+                        inventory.GiveItem(ItemIndex.AutoCastEquipment, 1);
+                        EquipmentIndex equipmentIndex = Run.instance.availableEquipmentDropList[Run.instance.spawnRng.RangeInt(0, Run.instance.availableEquipmentDropList.Count)].equipmentIndex;
+                        if (!LunarEquips.Value)
+                        {
+                            for (int i = 0; i < LunarEquipmentList.Length; i++)
+                            {
+                                if (equipmentIndex == LunarEquipmentList[i])
+                                {
+                                    equipmentIndex = EquipmentIndex.Fruit; // default to fruit.
+                                    break;
+                                }
+                            }
+                        }
+                        inventory.SetEquipmentIndex(equipmentIndex);
+                    }
+                }
             }
-            
-            /* Maybe when floats work in the configwrapper.
-            else if (ItemMultiplier.Value < 1f)
+            else // Default inheritance
             {
-                int count = 0;
-                foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+                if (!Tier1Items.Value)
                 {
-                    count = inventory.GetItemCount(index);
-                    inventory.ResetItem(index);
-                    inventory.GiveItem(index, (int)Math.Ceiling(count * ItemMultiplier.Value));
+                    foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+                    {
+                        inventory.ResetItem(index);
+                    }
                 }
-                foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+                if (!Tier2Items.Value)
                 {
-                    count = inventory.GetItemCount(index);
-                    inventory.ResetItem(index);
-                    inventory.GiveItem(index, (int)Math.Ceiling(count * ItemMultiplier.Value));
+                    foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+                    {
+                        inventory.ResetItem(index);
+                    }
                 }
-                foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                if (!Tier3Items.Value)
                 {
-                    count = inventory.GetItemCount(index);
-                    inventory.ResetItem(index);
-                    inventory.GiveItem(index, (int)Math.Ceiling(count * ItemMultiplier.Value));
+                    foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                    {
+                        inventory.ResetItem(index);
+                    }
                 }
-                foreach (ItemIndex index in ItemCatalog.lunarItemList)
+                if (!LunarItems.Value)
                 {
-                    count = inventory.GetItemCount(index);
-                    inventory.ResetItem(index);
-                    inventory.GiveItem(index, (int)Math.Ceiling(count * ItemMultiplier.Value));
+                    foreach (ItemIndex index in ItemCatalog.lunarItemList)
+                    {
+                        inventory.ResetItem(index);
+                    }
+                }
+                if (!InheritDio.Value)
+                {
+                    inventory.ResetItem(ItemIndex.ExtraLife);
+                }
+                if (!InheritHappiestMask.Value)
+                {
+                    inventory.ResetItem(ItemIndex.GhostOnKill);
+                }
+                float itemMultiplier = ConfigToFloat(ItemMultiplier.Value);
+                if (itemMultiplier != 1f)
+                {
+                    int count = 0;
+                    if (Tier1Items.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        }
+                    }
+                    if (Tier2Items.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        }
+                    }
+                    if (Tier3Items.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        }
+                    }
+                    if (LunarItems.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.lunarItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        }
+                    }
+                }
+
+                if (ItemRandomizer.Value)
+                {
+                    int count = 0;
+                    if (Tier1Items.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        }
+                    }
+                    if (Tier2Items.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        }
+                    }
+                    if (Tier3Items.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        }
+                    }
+                    if (LunarItems.Value)
+                    {
+                        foreach (ItemIndex index in ItemCatalog.lunarItemList)
+                        {
+                            count = inventory.GetItemCount(index);
+                            inventory.ResetItem(index);
+                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        }
+                    }
+                }
+
+                if (EquipItems.Value)
+                {                    
+                    inventory.ResetItem(ItemIndex.AutoCastEquipment);
+                    inventory.GiveItem(ItemIndex.AutoCastEquipment, 1);
+                    inventory.CopyEquipmentFrom(master.inventory);
+
+                    if (!LunarEquips.Value)
+                    {
+                        for (int i = 0; i < LunarEquipmentList.Length; i++)
+                        {
+                            if (inventory.GetEquipmentIndex() == LunarEquipmentList[i])
+                            {
+                                inventory.SetEquipmentIndex(EquipmentIndex.Fruit); // default to fruit
+                                break;
+                            }
+                        }
+                    }
+                    
                 }
             }
-            */
+
+            // Items that will never be used by the NPCs.
+            inventory.ResetItem(ItemIndex.TreasureCache);
+            inventory.ResetItem(ItemIndex.Feather);
+            inventory.ResetItem(ItemIndex.Firework);
+            inventory.ResetItem(ItemIndex.SprintArmor);
+            inventory.ResetItem(ItemIndex.JumpBoost);
+            inventory.ResetItem(ItemIndex.GoldOnHit);
+            inventory.ResetItem(ItemIndex.WardOnLevel);
+            inventory.ResetItem(ItemIndex.BeetleGland);
+            inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
+        }
+
+        public static void resetInventory(Inventory inventory)
+        {
+            foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+            {
+                inventory.ResetItem(index);
+            }
+            foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+            {
+                inventory.ResetItem(index);
+            }
+            foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+            {
+                inventory.ResetItem(index);
+            }
+            foreach (ItemIndex index in ItemCatalog.lunarItemList)
+            {
+                inventory.ResetItem(index);
+            }
+        }
+
+        public static void fixBackupDio()
+        {
+            if(FixBackupDio.Value)
+            {
+                On.RoR2.CharacterMaster.RespawnExtraLife += (orig, self) =>
+                {
+                    self.inventory.GiveItem(ItemIndex.ExtraLifeConsumed, 1);
+
+                    if (self.bodyPrefab.name.ToString() == "BackupDroneBody")
+                    {       
+                        self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"), 
+                            Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), false);
+                        self.gameObject.AddComponent<MasterSuicideOnTimer>().lifeTimer = 25f + UnityEngine.Random.Range(0f, 3f);
+                    }
+                    else
+                    {
+                        self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), false);
+                    }
+                    self.GetBody().AddTimedBuff(BuffIndex.Immune, 3f);
+                    GameObject gameObject = Resources.Load<GameObject>("Prefabs/Effects/HippoRezEffect");
+                    if (self.GetPropertyValue<GameObject>("bodyInstanceObject"))
+                    {
+                        foreach (EntityStateMachine entityStateMachine in self.GetPropertyValue<GameObject>("bodyInstanceObject").GetComponents<EntityStateMachine>())
+                        {
+                            entityStateMachine.initialStateType = entityStateMachine.mainStateType;
+                        }
+                        if (gameObject)
+                        {
+                            EffectManager.instance.SpawnEffect(gameObject, new EffectData
+                            {
+                                origin = self.GetFieldValue<Vector3>("deathFootPosition"),
+                                rotation = self.GetPropertyValue<GameObject>("bodyInstanceObject").transform.rotation
+                            }, true);
+                        }
+                    }
+                };
+            }
+        }
+
+        public static void baseDrones()
+        {
+           if (DronesInherit.Value)
+            {
+                On.RoR2.SummonMasterBehavior.OpenSummon += (orig, self, activator) =>
+                {
+                    if (!NetworkServer.active)
+                    {
+                        Debug.LogWarning("[Server] function 'System.Void RoR2.SummonMasterBehavior::OpenSummon(RoR2.Interactor)' called on client");
+                        return;
+                    }
+                    GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(self.masterPrefab, self.transform.position, self.transform.rotation);
+                    CharacterBody component = activator.GetComponent<CharacterBody>();
+                    CharacterMaster master = component.master;
+                    CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
+                    component2.teamIndex = TeamComponent.GetObjectTeam(component.gameObject);
+                    Inventory component3 = gameObject.GetComponent<Inventory>();
+             
+                    component3.CopyItemsFrom(master.inventory);
+                    checkConfig(component3, master);
+                    NetworkServer.Spawn(gameObject);
+                    component2.SpawnBody(component2.bodyPrefab, self.transform.position + Vector3.up * 0.8f, self.transform.rotation);
+                    AIOwnership component4 = gameObject.GetComponent<AIOwnership>();
+                    if (component4 && component && master)
+                    {
+                        component4.ownerMaster = master;
+                    }
+                    BaseAI component5 = gameObject.GetComponent<BaseAI>();
+                    if (component5)
+                    {
+                        component5.leader.gameObject = activator.gameObject;
+                    }
+                    UnityEngine.Object.Destroy(self.gameObject);
+                };
+            }
+        }
+
+        public static void backupDrones()
+        {
+            if(BackupDronesInherit.Value)
+            {
+                On.RoR2.EquipmentSlot.SummonMaster += (orig, self, masterObjectPrefab, position) =>
+                {
+                    if (!NetworkServer.active)
+                    {
+                        Debug.LogWarning("[Server] function 'RoR2.CharacterMaster RoR2.EquipmentSlot::SummonMaster(UnityEngine.GameObject,UnityEngine.Vector3)' called on client");
+                        return null;
+                    }
+                    GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(masterObjectPrefab, position, self.transform.rotation);
+                    CharacterBody component = self.GetComponent<CharacterBody>();
+                    CharacterMaster master = component.master;
+                    CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
+                    component2.teamIndex = TeamComponent.GetObjectTeam(component.gameObject);
+                    Inventory component3 = gameObject.GetComponent<Inventory>();
+                    component3.CopyItemsFrom(master.inventory);
+
+                    checkConfig(component3, master);
+
+                    if (EquipItems.Value)
+                    {
+                        if (component3.GetEquipmentIndex() == EquipmentIndex.DroneBackup)
+                        {
+                            component3.SetEquipmentIndex(EquipmentIndex.Fruit); // default to fruit. make this a config option next patch or something
+                        }
+                    }
+
+                    NetworkServer.Spawn(gameObject);
+                    component2.SpawnBody(component2.bodyPrefab, position, self.transform.rotation);
+                    AIOwnership component4 = gameObject.GetComponent<AIOwnership>();
+                    if (component4 && component && master)
+                    {
+                        component4.ownerMaster = master;
+                    }
+                    BaseAI component5 = gameObject.GetComponent<BaseAI>();
+                    if (component5)
+                    {
+                        component5.leader.gameObject = self.gameObject;
+                    }
+                    return component2;
+                };
+            }
         }
 
         public static void queensGuard()
@@ -330,11 +634,10 @@ namespace Basil_ror2
                                 if (gameObject)
                                 {
                                     CharacterMaster component = gameObject.GetComponent<CharacterMaster>();
-
                                     Inventory inventory = gameObject.GetComponent<Inventory>();
-                                   
+                                    
                                     inventory.CopyItemsFrom(self.inventory);
-                                    checkConfig(inventory);
+                                    checkConfig(inventory, self.master);
 
                                     AIOwnership component2 = gameObject.GetComponent<AIOwnership>();
                                     BaseAI component3 = gameObject.GetComponent<BaseAI>();
@@ -403,10 +706,8 @@ namespace Basil_ror2
                     if (inventory)
                     {
                         component.inventory.CopyItemsFrom(ownerBody.inventory);
-                        component.inventory.CopyEquipmentFrom(inventory);
-               
                     }
-                    checkConfig(component.inventory);
+                    checkConfig(component.inventory, ownerBody.master);
                     component.inventory.GiveItem(ItemIndex.Ghost, 1);
                     component.inventory.GiveItem(ItemIndex.HealthDecay, duration);
                     component.inventory.GiveItem(ItemIndex.BoostDamage, 30);
@@ -423,5 +724,6 @@ namespace Basil_ror2
                 };              
             }
         }
+
     }
 }
