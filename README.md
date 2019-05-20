@@ -1,7 +1,11 @@
-# Basil's Drones Inherit Items
+# Drones Inherit Items
+## By Basil
 A mod that allows **all** drones and turrets (and then some) to inherit items from the player when purchased.
 
-**Now configurable!** 
+**Has QUEEN GUARDS, GHOSTS, and is even MORE configurable!** 
+
+**Don't want to inherit player items but still want things to have items? Now possible with the ItemGenerator option in the config file!**
+*Will ignore inherit settings.*
 
 All drones and turrets are affected by this mod. It will only inherit the items from a player's inventory at the time of purchase or activation.
 
@@ -16,7 +20,7 @@ All drones and turrets are affected by this mod. It will only inherit the items 
 1. To find the config file, first start up the game with DronesInheritItems.dll in your \BepInEx\plugins folder already!
 2. Then go to \BepInEx\config and open com.Basil.DronesInheritItems.cfg
 
-Please check the config and assign values properly! *I didn't handle bad values.*
+**I highly recommend deleting the config file if you previously installed this mod so it can be updated with the most recent config layout.**
 
 ## Ingame Examples
 
@@ -26,11 +30,41 @@ Please check the config and assign values properly! *I didn't handle bad values.
 
 [Back-up Drones](https://www.youtube.com/watch?v=vYXISaecv74&feature=youtu.be) (also had 4x modded base drone attack speed)
 
+## FAQ
+
+Q: How do you calculate the item max cap for item generation?
+
+A: Currently the way it is done is randomly selecting a value from 0 to the current stage * item max cap, inclusively, for every item.
+
+Q: How does the ItemRandomizer setting work?
+
+A: It will randomly choose a value between 0 and the player's item count for the respective item if the setting is true.
+
 ## Future Plans
 
-- Allow configuration of settings with console/chat commands.
+- Allow configuration of settings with an ingame menu! If someone knows how to help, please contact me on Discord!
+
+- Update drone inventories after a stage completion.
 
 ## Changelog
+
+**v2.1.0** EXTRA CONFIG PATCH!
+
+- Added item generation and its respective options (default is set to false)
+
+- Added option to inherit equipment. Only works with Queen Guards and Ghosts. (default is set to false)
+
+- Added float/decimal handling for ItemMultiplier. Possible to now have drones inherit half your items! (default is set to 1)
+
+- Added ItemRandomizer option (default is set to false)
+
+- Added option to have drones and turrets inherit items (default is set to true)
+
+- Added option for Back-up drones to inherit items (default is set to true)
+
+- Added proper fix and option for Back-up drones to reinherit 25s death timer upon Dio's revive (default is set to true)
+
+
 
 **v2.0.0**
 
