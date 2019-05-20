@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using RoR2;
@@ -10,12 +11,13 @@ using UnityEngine.Networking;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.1.0")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.2.0")]
     public class DroneWithItems : BaseUnityPlugin
     {
         public static ConfigWrapper<string> ItemMultiplier;
         public static ConfigWrapper<bool> ItemRandomizer;
         public static ConfigWrapper<bool> ItemGenerator;
+        public static ConfigWrapper<bool> UpdateInventory;
         public static ConfigWrapper<string> Tier1GenCap;
         public static ConfigWrapper<string> Tier2GenCap;
         public static ConfigWrapper<string> Tier3GenCap;
@@ -44,7 +46,15 @@ namespace Basil_ror2
             EquipmentIndex.Meteor,
             EquipmentIndex.LunarPotion, // no idea what this is but it has lunar on it :D
             EquipmentIndex.BurnNearby,
-            EquipmentIndex.CrippleWard,
+            EquipmentIndex.CrippleWard
+        };
+
+        public static String[] bodyprefabNames = new String[]
+        {
+            "Drone1Body",
+            "Drone2Body",
+            "MegaDroneBody",
+            "MissileDroneBody"
         };
 
         public void InitConfig()
@@ -72,6 +82,13 @@ namespace Basil_ror2
                 "Base Inherit Settings",
                 "ItemRandomizer",
                 "Toggles random amounts of items to be inherited from the player's inventory.",
+                false
+                );
+
+            UpdateInventory = Config.Wrap(
+                "Base Inherit Settings",
+                "UpdateInventory",
+                "Toggles updating drone inventory after every stage completion.",
                 false
                 );
 
@@ -229,11 +246,11 @@ namespace Basil_ror2
             InitConfig();
 
             fixBackupDio();
-
             baseDrones();
             backupDrones();
             queensGuard();
             spookyGhosts();
+            updateAfterStage();
         }     
 
         public static void checkConfig(Inventory inventory, CharacterMaster master)
@@ -314,144 +331,7 @@ namespace Basil_ror2
             }
             else // Default inheritance
             {
-                if (!Tier1Items.Value)
-                {
-                    foreach (ItemIndex index in ItemCatalog.tier1ItemList)
-                    {
-                        inventory.ResetItem(index);
-                    }
-                }
-                if (!Tier2Items.Value)
-                {
-                    foreach (ItemIndex index in ItemCatalog.tier2ItemList)
-                    {
-                        inventory.ResetItem(index);
-                    }
-                }
-                if (!Tier3Items.Value)
-                {
-                    foreach (ItemIndex index in ItemCatalog.tier3ItemList)
-                    {
-                        inventory.ResetItem(index);
-                    }
-                }
-                if (!LunarItems.Value)
-                {
-                    foreach (ItemIndex index in ItemCatalog.lunarItemList)
-                    {
-                        inventory.ResetItem(index);
-                    }
-                }
-                if (!InheritDio.Value)
-                {
-                    inventory.ResetItem(ItemIndex.ExtraLife);
-                }
-                if (!InheritHappiestMask.Value)
-                {
-                    inventory.ResetItem(ItemIndex.GhostOnKill);
-                }
-                float itemMultiplier = ConfigToFloat(ItemMultiplier.Value);
-                if (itemMultiplier != 1f)
-                {
-                    int count = 0;
-                    if (Tier1Items.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.tier1ItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
-                        }
-                    }
-                    if (Tier2Items.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.tier2ItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
-                        }
-                    }
-                    if (Tier3Items.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.tier3ItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
-                        }
-                    }
-                    if (LunarItems.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.lunarItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
-                        }
-                    }
-                }
-
-                if (ItemRandomizer.Value)
-                {
-                    int count = 0;
-                    if (Tier1Items.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.tier1ItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
-                        }
-                    }
-                    if (Tier2Items.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.tier2ItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
-                        }
-                    }
-                    if (Tier3Items.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.tier3ItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
-                        }
-                    }
-                    if (LunarItems.Value)
-                    {
-                        foreach (ItemIndex index in ItemCatalog.lunarItemList)
-                        {
-                            count = inventory.GetItemCount(index);
-                            inventory.ResetItem(index);
-                            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
-                        }
-                    }
-                }
-
-                if (EquipItems.Value)
-                {                    
-                    inventory.ResetItem(ItemIndex.AutoCastEquipment);
-                    inventory.GiveItem(ItemIndex.AutoCastEquipment, 1);
-                    inventory.CopyEquipmentFrom(master.inventory);
-
-                    if (!LunarEquips.Value)
-                    {
-                        for (int i = 0; i < LunarEquipmentList.Length; i++)
-                        {
-                            if (inventory.GetEquipmentIndex() == LunarEquipmentList[i])
-                            {
-                                inventory.SetEquipmentIndex(EquipmentIndex.Fruit); // default to fruit
-                                break;
-                            }
-                        }
-                    }
-                    
-                }
+                updateInventory(inventory, master);
             }
 
             // Items that will never be used by the NPCs.
@@ -725,5 +605,169 @@ namespace Basil_ror2
             }
         }
 
+        public static void updateInventory(Inventory inventory, CharacterMaster master)
+        {
+            if (!Tier1Items.Value)
+            {
+                foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+                {
+                    inventory.ResetItem(index);
+                }
+            }
+            if (!Tier2Items.Value)
+            {
+                foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+                {
+                    inventory.ResetItem(index);
+                }
+            }
+            if (!Tier3Items.Value)
+            {
+                foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                {
+                    inventory.ResetItem(index);
+                }
+            }
+            if (!LunarItems.Value)
+            {
+                foreach (ItemIndex index in ItemCatalog.lunarItemList)
+                {
+                    inventory.ResetItem(index);
+                }
+            }
+            if (!InheritDio.Value)
+            {
+                inventory.ResetItem(ItemIndex.ExtraLife);
+            }
+            if (!InheritHappiestMask.Value)
+            {
+                inventory.ResetItem(ItemIndex.GhostOnKill);
+            }
+            float itemMultiplier = ConfigToFloat(ItemMultiplier.Value);
+            if (itemMultiplier != 1f)
+            {
+                int count = 0;
+                if (Tier1Items.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                    }
+                }
+                if (Tier2Items.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                    }
+                }
+                if (Tier3Items.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                    }
+                }
+                if (LunarItems.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.lunarItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                    }
+                }
+            }
+
+            if (ItemRandomizer.Value)
+            {
+                int count = 0;
+                if (Tier1Items.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.tier1ItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                    }
+                }
+                if (Tier2Items.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.tier2ItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                    }
+                }
+                if (Tier3Items.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                    }
+                }
+                if (LunarItems.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.lunarItemList)
+                    {
+                        count = inventory.GetItemCount(index);
+                        inventory.ResetItem(index);
+                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                    }
+                }
+            }
+
+            if (EquipItems.Value)
+            {
+                inventory.ResetItem(ItemIndex.AutoCastEquipment);
+                inventory.GiveItem(ItemIndex.AutoCastEquipment, 1);
+                inventory.CopyEquipmentFrom(master.inventory);
+
+                if (!LunarEquips.Value)
+                {
+                    for (int i = 0; i < LunarEquipmentList.Length; i++)
+                    {
+                        if (inventory.GetEquipmentIndex() == LunarEquipmentList[i])
+                        {
+                            inventory.SetEquipmentIndex(EquipmentIndex.Fruit); // default to fruit
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void updateAfterStage()
+        {
+            if (UpdateInventory.Value)
+            {
+                On.RoR2.Run.AdvanceStage += (orig, self, nextSceneName) =>
+                {
+                    var masters = CharacterMaster.readOnlyInstancesList;
+                    List<CharacterMaster> masterList = masters.Cast<CharacterMaster>().ToList();
+                    foreach (CharacterMaster cm in masterList)
+                    {
+                        if (bodyprefabNames.Contains(cm.bodyPrefab.name))
+                        {
+                            CharacterMaster host = PlayerCharacterMasterController.instances[0].master;
+                            Inventory inventory = cm.inventory;
+                            inventory.CopyItemsFrom(host.inventory);
+                            updateInventory(inventory, host);
+                          
+                        }
+                    }
+                    orig(self, nextSceneName);
+                };
+            }
+        }
     }
 }
