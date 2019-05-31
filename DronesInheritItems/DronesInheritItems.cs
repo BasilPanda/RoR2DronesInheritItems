@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.2.0")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.3.0")]
     public class DroneWithItems : BaseUnityPlugin
     {
         public static ConfigWrapper<string> ItemMultiplier;
@@ -37,6 +37,7 @@ namespace Basil_ror2
         public static ConfigWrapper<bool> InheritHappiestMask;
         public static ConfigWrapper<bool> FixBackupDio;
         public static ConfigWrapper<bool> DronesInherit;
+        public static ConfigWrapper<bool> TurretsInherit;
         public static ConfigWrapper<bool> BackupDronesInherit;
         public static ConfigWrapper<bool> QueenGuardInherit;
         public static ConfigWrapper<bool> GhostInherit;
@@ -62,7 +63,13 @@ namespace Basil_ror2
             DronesInherit = Config.Wrap(
                 "Base Inherit Settings",
                 "DronesInherit",
-                "Toggles BOTH purchasable drones and turrets to inherit items.",
+                "Toggles ONLY purchasable drones to inherit items.",
+                true);
+
+            TurretsInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "TurretsInherit",
+                "Toggles ONLY purchasable turrets to inherit items.",
                 true);
 
             BackupDronesInherit = Config.Wrap(
@@ -328,11 +335,6 @@ namespace Basil_ror2
                         inventory.SetEquipmentIndex(equipmentIndex);
                     }
                 }
-            }
-            else // Default inheritance
-            {
-                updateInventory(inventory, master);
-            }
 
             // Items that will never be used by the NPCs.
             inventory.ResetItem(ItemIndex.TreasureCache);
@@ -344,6 +346,12 @@ namespace Basil_ror2
             inventory.ResetItem(ItemIndex.WardOnLevel);
             inventory.ResetItem(ItemIndex.BeetleGland);
             inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
+
+            }
+            else // Default inheritance
+            {
+                updateInventory(inventory, master);
+            }
         }
 
         public static void resetInventory(Inventory inventory)
@@ -407,15 +415,15 @@ namespace Basil_ror2
 
         public static void baseDrones()
         {
-           if (DronesInherit.Value)
+            On.RoR2.SummonMasterBehavior.OpenSummon += (orig, self, activator) =>
             {
-                On.RoR2.SummonMasterBehavior.OpenSummon += (orig, self, activator) =>
+                if (!NetworkServer.active)
                 {
-                    if (!NetworkServer.active)
-                    {
-                        Debug.LogWarning("[Server] function 'System.Void RoR2.SummonMasterBehavior::OpenSummon(RoR2.Interactor)' called on client");
-                        return;
-                    }
+                    Debug.LogWarning("[Server] function 'System.Void RoR2.SummonMasterBehavior::OpenSummon(RoR2.Interactor)' called on client");
+                    return;
+                }
+                if(DronesInherit.Value && self.masterPrefab.name.ToString() != "Turret1Master") 
+                {
                     GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(self.masterPrefab, self.transform.position, self.transform.rotation);
                     CharacterBody component = activator.GetComponent<CharacterBody>();
                     CharacterMaster master = component.master;
@@ -438,8 +446,38 @@ namespace Basil_ror2
                         component5.leader.gameObject = activator.gameObject;
                     }
                     UnityEngine.Object.Destroy(self.gameObject);
-                };
-            }
+                }
+                else if (TurretsInherit.Value && self.masterPrefab.name.ToString() == "Turret1Master")
+                {
+                    GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(self.masterPrefab, self.transform.position, self.transform.rotation);
+                    CharacterBody component = activator.GetComponent<CharacterBody>();
+                    CharacterMaster master = component.master;
+                    CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
+                    component2.teamIndex = TeamComponent.GetObjectTeam(component.gameObject);
+                    Inventory component3 = gameObject.GetComponent<Inventory>();
+             
+                    component3.CopyItemsFrom(master.inventory);
+                    checkConfig(component3, master);
+                    NetworkServer.Spawn(gameObject);
+                    component2.SpawnBody(component2.bodyPrefab, self.transform.position + Vector3.up * 0.8f, self.transform.rotation);
+                    AIOwnership component4 = gameObject.GetComponent<AIOwnership>();
+                    if (component4 && component && master)
+                    {
+                        component4.ownerMaster = master;
+                    }
+                    BaseAI component5 = gameObject.GetComponent<BaseAI>();
+                    if (component5)
+                    {
+                        component5.leader.gameObject = activator.gameObject;
+                    }
+                    UnityEngine.Object.Destroy(self.gameObject);
+                }
+                else {
+                    orig(self,activator);
+                }
+                
+            };
+            
         }
 
         public static void backupDrones()
@@ -744,6 +782,17 @@ namespace Basil_ror2
                     }
                 }
             }
+
+            // Items that will never be used by the NPCs.
+            inventory.ResetItem(ItemIndex.TreasureCache);
+            inventory.ResetItem(ItemIndex.Feather);
+            inventory.ResetItem(ItemIndex.Firework);
+            inventory.ResetItem(ItemIndex.SprintArmor);
+            inventory.ResetItem(ItemIndex.JumpBoost);
+            inventory.ResetItem(ItemIndex.GoldOnHit);
+            inventory.ResetItem(ItemIndex.WardOnLevel);
+            inventory.ResetItem(ItemIndex.BeetleGland);
+            inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
         }
 
         public static void updateAfterStage()
