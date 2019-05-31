@@ -2,10 +2,12 @@
 ## By Basil
 A mod that allows **all** drones and turrets (and then some) to inherit items from the player when purchased.
 
-**Has QUEEN GUARDS, GHOSTS, and is even MORE configurable!** 
+**Has QUEEN GUARDS, GHOSTS, and lots of configuration!** 
 
 **Don't want to inherit player items but still want things to have items? Now possible with the ItemGenerator option in the config file!**
 *Will ignore inherit settings.*
+
+**Now has an update drone inventory option!**
 
 All drones and turrets are affected by this mod. It will only inherit the items from a player's inventory at the time of purchase or activation.
 
@@ -44,9 +46,11 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 - Allow configuration of settings with an ingame menu! If someone knows how to help, please contact me on Discord!
 
-- Update drone inventories after a stage completion.
-
 ## Changelog
+
+**v2.2.0** UPDATING DRONES PATCH
+
+- Added option for drones to have their inventories updated to what the host has (default is set to false)
 
 **v2.1.0** EXTRA CONFIG PATCH!
 
@@ -63,8 +67,6 @@ A: It will randomly choose a value between 0 and the player's item count for the
 - Added option for Back-up drones to inherit items (default is set to true)
 
 - Added proper fix and option for Back-up drones to reinherit 25s death timer upon Dio's revive (default is set to true)
-
-
 
 **v2.0.0**
 
