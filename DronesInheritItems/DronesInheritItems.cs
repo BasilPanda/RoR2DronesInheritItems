@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.3.0")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.3.1")]
     public class DroneWithItems : BaseUnityPlugin
     {
         public static ConfigWrapper<string> ItemMultiplier;
@@ -270,7 +270,7 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.tier1ItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(Tier1GenCap.Value), master))
+                        if (Util.CheckRoll(ConfigToFloat(Tier1GenChance.Value), master))
                         {
                             inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier1GenCap.Value) + 1)));
                         }
@@ -280,7 +280,7 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.tier2ItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(Tier2GenCap.Value), master))
+                        if (Util.CheckRoll(ConfigToFloat(Tier2GenChance.Value), master))
                         {
                             inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier2GenCap.Value) + 1)));
                         }
@@ -290,7 +290,7 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.tier3ItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(Tier3GenCap.Value), master))
+                        if (Util.CheckRoll(ConfigToFloat(Tier3GenChance.Value), master))
                         {
                             inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier3GenCap.Value) + 1)));
                         }
@@ -300,7 +300,7 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.lunarItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(LunarGenCap.Value), master))
+                        if (Util.CheckRoll(ConfigToFloat(LunarGenChance.Value), master))
                         {
                             inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(LunarGenCap.Value) + 1)));
                         }
