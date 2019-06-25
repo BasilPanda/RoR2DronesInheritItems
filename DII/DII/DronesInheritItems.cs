@@ -278,7 +278,6 @@ namespace Basil_ror2
             Hooks.backupDrones();
             Hooks.queensGuard();
             Hooks.turrets();
-            // Hooks.spookyGhosts();
             Hooks.updateAfterStage();
             Chat.AddMessage("DronesInheritItems Loaded!");
         }

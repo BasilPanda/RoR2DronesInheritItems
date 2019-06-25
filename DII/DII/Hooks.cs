@@ -200,7 +200,6 @@ namespace Basil_ror2
                         ignoreTeamMemberLimit = false
                     }.Perform();
                     Inventory inventory = characterMaster.inventory;
-                    Chat.AddMessage(masterObjectPrefab.name);
                     if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster")
                     {
                         inventory.CopyItemsFrom(characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster.inventory);
@@ -365,12 +364,22 @@ namespace Basil_ror2
                     if (DII.GhostInherit.Value)
                     {
                         AIOwnership component2 = gameObject.GetComponent<AIOwnership>();
-                        inventory.CopyItemsFrom(component2.ownerMaster.inventory);
-                        DII.checkConfig(inventory, component2.ownerMaster);
+                        CharacterBody c3 = self.summonerBodyObject.GetComponent<CharacterBody>();
+                        CharacterMaster master = c3.master;
+                        inventory.CopyItemsFrom(master.inventory);
+                        DII.checkConfig(inventory, master);
                     }
                 }
                 NetworkServer.Spawn(gameObject);
                 component.Respawn(self.position, self.rotation, false);
+                CharacterBody body = component.GetBody();
+                if (body)
+                {
+                    foreach (EntityStateMachine entityStateMachine in body.GetComponents<EntityStateMachine>())
+                    {
+                        entityStateMachine.initialStateType = entityStateMachine.mainStateType;
+                    }
+                }
                 return component;
             };
         }
