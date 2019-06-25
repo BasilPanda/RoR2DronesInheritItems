@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -28,7 +28,7 @@ public static class Reflection
                          .GetField(fieldName, _defaultFlags | BindingFlags.Instance)
                          .GetValue(instance);
 
-    public static TReturn GetFieldValue<TClass, TReturn>(string fieldName) => 
+    public static TReturn GetFieldValue<TClass, TReturn>(string fieldName) =>
         GetFieldValue<TReturn>(typeof(TClass), fieldName);
 
     public static TReturn GetFieldValue<TReturn>(this Type type, string fieldName) =>
@@ -40,7 +40,7 @@ public static class Reflection
                 .GetField(fieldName, _defaultFlags | BindingFlags.Instance)
                 .SetValue(instance, value);
 
-    public static void SetFieldValue<TClass>(string fieldName, object value) => 
+    public static void SetFieldValue<TClass>(string fieldName, object value) =>
         SetFieldValue(typeof(TClass), fieldName, value);
 
     public static void SetFieldValue(this Type type, string fieldName, object value) =>
@@ -55,7 +55,7 @@ public static class Reflection
                          .GetProperty(propName, _defaultFlags | BindingFlags.Instance)
                          .GetValue(instance);
 
-    public static TReturn GetPropertyValue<TClass, TReturn>(string propName) => 
+    public static TReturn GetPropertyValue<TClass, TReturn>(string propName) =>
         GetPropertyValue<TReturn>(typeof(TClass), propName);
 
     public static TReturn GetPropertyValue<TReturn>(this Type type, string propName) =>
@@ -89,7 +89,7 @@ public static class Reflection
         (TReturn)type.GetMethod(methodName, _defaultFlags | BindingFlags.Static)
                      .Invoke(null, methodParams);
 
-    public static void InvokeMethod(this object instance, string methodName, params object[] methodParams) => 
+    public static void InvokeMethod(this object instance, string methodName, params object[] methodParams) =>
         instance.InvokeMethod<object>(methodName, methodParams);
 
     public static void InvokeMethod<TClass>(string methodName, params object[] methodParams) =>
@@ -104,7 +104,7 @@ public static class Reflection
     public static Type GetNestedType<TParent>(string name) =>
         GetNestedType(typeof(TParent), name);
 
-    public static Type GetNestedType(this Type parentType, string name) => 
+    public static Type GetNestedType(this Type parentType, string name) =>
         parentType.GetNestedType(name, BindingFlags.Public | BindingFlags.NonPublic);
 
     public static object Instantiate(this Type type) =>
@@ -122,7 +122,7 @@ public static class Reflection
     public static object InstantiateGeneric(this Type genericType, Type[] typeArguments) =>
         genericType.MakeGenericType(typeArguments).Instantiate();
 
-    public static IList InstantiateList(this Type type) => 
+    public static IList InstantiateList(this Type type) =>
         (IList)typeof(List<>).MakeGenericType(type).Instantiate();
 
     #endregion

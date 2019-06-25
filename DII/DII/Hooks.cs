@@ -19,7 +19,21 @@ namespace Basil_ror2
             "MissileDroneBody"
         };
 
-        // Update inventories after every stage
+        // Master names to check
+        public static String[] masterNames = new String[]
+        {
+            "Drone1Master",
+            "Drone2Master",
+            "DroneBackupMaster",
+            "DroneMissileMaster",
+            "Turret1Master",
+            "MegaDroneMaster",
+            "FlameDroneMaster",
+            "EquipmentDroneMaster",
+            "TitanGoldMaster"
+        };
+
+        // Update inventories after every stage -- NO SOURCE CHANGE
         public static void updateAfterStage()
         {
             if (DII.UpdateInventory.Value)
@@ -44,7 +58,7 @@ namespace Basil_ror2
             }
         }
 
-        // Ghost inheritance
+        // Ghost inheritance -- NO SOURCE CHANGE
         public static void spookyGhosts()
         {
             if (DII.GhostInherit.Value)
@@ -101,7 +115,7 @@ namespace Basil_ror2
             }
         }
 
-        // Queen Guard inheritance
+        // Queen Guard inheritance -- SOURCE CODE CHANGED -- UPDATED MODDED CODE
         public static void queensGuard()
         {
             if (DII.QueenGuardInherit.Value)
@@ -118,13 +132,15 @@ namespace Basil_ror2
                             if (self.GetFieldValue<float>("guardResummonCooldown") <= 0f)
                             {
                                 self.SetFieldValue("guardResummonCooldown", 30f);
-                                GameObject gameObject = DirectorCore.instance.TrySpawnObject((SpawnCard)Resources.Load("SpawnCards/CharacterSpawnCards/cscBeetleGuardAlly"), new DirectorPlacementRule
+                                DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest((SpawnCard)Resources.Load("SpawnCards/CharacterSpawnCards/cscBeetleGuardAlly"), new DirectorPlacementRule
                                 {
                                     placementMode = DirectorPlacementRule.PlacementMode.Approximate,
                                     minDistance = 3f,
                                     maxDistance = 40f,
                                     spawnOnTarget = self.transform
                                 }, RoR2Application.rng);
+                                directorSpawnRequest.summonerBodyObject = self.gameObject;
+                                GameObject gameObject = DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
                                 if (gameObject)
                                 {
                                     CharacterMaster component = gameObject.GetComponent<CharacterMaster>();
@@ -163,12 +179,13 @@ namespace Basil_ror2
             }
         }
 
-        // Backup Drone inheritance
+        // Backup Drone inheritance -- NO LONGER NEEDED, CODE REFACTORED TO MASTER SUMMON
         public static void backupDrones()
         {
+            /*
             if (DII.BackupDronesInherit.Value)
             {
-                On.RoR2.EquipmentSlot.SummonMaster += (orig, self, masterObjectPrefab, position) =>
+                On.RoR2.EquipmentSlot.SummonMaster += (orig, self, masterObjectPrefab, position, rotation) =>
                 {
                     if (!NetworkServer.active)
                     {
@@ -208,59 +225,155 @@ namespace Basil_ror2
                     return component2;
                 };
             }
+            */
         }
 
-        // Drones & Turrets inheritance
-        public static void baseDrones()
+        // All Drones & Turrets inheritance
+        public static void masterSummon()
         {
-            On.RoR2.SummonMasterBehavior.OpenSummon += (orig, self, activator) =>
+            On.RoR2.MasterSummon.Perform += (orig, self) =>
             {
-                if (!NetworkServer.active)
+                TeamIndex teamIndex;
+                if (self.teamIndexOverride != null)
                 {
-                    Debug.LogWarning("[Server] function 'System.Void RoR2.SummonMasterBehavior::OpenSummon(RoR2.Interactor)' called on client");
-                    return;
-                }
-                if (DII.DronesInherit.Value || DII.TurretsInherit.Value)
-                { 
-                    GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(self.masterPrefab, self.transform.position, self.transform.rotation);
-                    CharacterBody component = activator.GetComponent<CharacterBody>();
-                    CharacterMaster master = component.master;
-                    CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
-                    component2.teamIndex = TeamComponent.GetObjectTeam(component.gameObject);
-                    Inventory component3 = gameObject.GetComponent<Inventory>();
-                    if (DII.DronesInherit.Value && self.masterPrefab.name.ToString() != "Turret1Master")
-                    {
-                        component3.CopyItemsFrom(master.inventory);
-                        DII.checkConfig(component3, master);
-                    }
-                    else if (DII.TurretsInherit.Value && self.masterPrefab.name.ToString() == "Turret1Master")
-                    {
-                        component3.CopyItemsFrom(master.inventory);
-                        DII.checkConfig(component3, master);
-                    }
-                    NetworkServer.Spawn(gameObject);
-                    component2.SpawnBody(component2.bodyPrefab, self.transform.position + Vector3.up * 0.8f, self.transform.rotation);
-                    AIOwnership component4 = gameObject.GetComponent<AIOwnership>();
-                    if (component4 && component && master)
-                    {
-                        component4.ownerMaster = master;
-                    }
-                    BaseAI component5 = gameObject.GetComponent<BaseAI>();
-                    if (component5)
-                    {
-                        component5.leader.gameObject = activator.gameObject;
-                    }
-                    UnityEngine.Object.Destroy(self.gameObject);
+                    teamIndex = self.teamIndexOverride.Value;
                 }
                 else
                 {
-                    orig(self, activator);
+                    if (!self.summonerBodyObject)
+                    {
+                        Debug.LogErrorFormat("Cannot spawn master {0}: No team specified.", new object[]
+                        {
+                        self.masterPrefab
+                        });
+                        return null;
+                    }
+                    teamIndex = TeamComponent.GetObjectTeam(self.summonerBodyObject);
                 }
+                if (!self.ignoreTeamMemberLimit)
+                {
+                    TeamDef teamDef = TeamCatalog.GetTeamDef(teamIndex);
+                    if (teamDef == null)
+                    {
+                        Debug.LogErrorFormat("Attempting to spawn master {0} on TeamIndex.None. Is this intentional?", new object[]
+                        {
+                        self.masterPrefab
+                        });
+                        return null;
+                    }
+                    if (teamDef != null && teamDef.softCharacterLimit <= TeamComponent.GetTeamMembers(teamIndex).Count)
+                    {
+                        return null;
+                    }
+                }
+                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(self.masterPrefab, self.position, self.rotation);
+                CharacterMaster component = gameObject.GetComponent<CharacterMaster>();
+                component.teamIndex = teamIndex;
+               
+                if (self.summonerBodyObject)
+                {
+                    AIOwnership component2 = gameObject.GetComponent<AIOwnership>();
+                    if (component2)
+                    {
+                        CharacterBody component3 = self.summonerBodyObject.GetComponent<CharacterBody>();
+                        if (component3)
+                        {
+                            CharacterMaster master = component3.master;
+                            if (master)
+                            {
+                                component2.ownerMaster = master;
 
+                                /////////////////
+                                /////////////////
+                                /////////////////
+                                /////////////////
+                                // MODDED PART //
+                                /////////////////
+                                /////////////////
+                                /////////////////
+                                /////////////////
+                                
+                                Inventory inventory = gameObject.GetComponent<Inventory>();
+
+                                // Gunner drones
+                                if (DII.GunnerDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone1Master")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+                                // Healer drones
+                                else if (DII.HealDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone2Master")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+                                // Missile drones
+                                else if (DII.MissileDronesInherit.Value && self.masterPrefab.name.ToString() == "DroneMissileMaster")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+                                // TC-280 Prototype drones
+                                else if (DII.ProtoDronesInherit.Value && self.masterPrefab.name.ToString() == "MegaDroneMaster")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+                                // Incinerator drones
+                                else if (DII.FlameDronesInherit.Value && self.masterPrefab.name.ToString() == "FlameDroneMaster")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+                                // Equipment drones
+                                else if (DII.EquipDronesInherit.Value && self.masterPrefab.name.ToString() == "EquipmentDroneMaster")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+                                // All turrets
+                                else if (DII.TurretsInherit.Value && self.masterPrefab.name.ToString() == "Turret1Master")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+                                // Backup Drones
+                                else if (DII.BackupDronesInherit.Value && self.masterPrefab.name.ToString() == "DroneBackUpMaster")
+                                {
+                                    inventory.CopyItemsFrom(master.inventory);
+                                    DII.checkConfig(inventory, master);
+                                }
+
+                                /////////////////
+                                /////////////////
+                                /////////////////
+                                /////////////////
+                                // MODDED PART //
+                                /////////////////
+                                /////////////////
+                                /////////////////
+                                /////////////////
+
+                            }
+                        }
+                    }
+                    BaseAI component4 = gameObject.GetComponent<BaseAI>();
+                    if (component4)
+                    {
+                        component4.leader.gameObject = self.summonerBodyObject;
+                    }
+                }
+                Action<CharacterMaster> action = self.preSpawnSetupCallback;
+                if (action != null)
+                {
+                    action(component);
+                }
+                NetworkServer.Spawn(gameObject);
+                component.Respawn(self.position, self.rotation, false);
+                return component;
             };
-
         }
-
+        
         // Fixes Dio reinheritance
         public static void fixBackupDio()
         {

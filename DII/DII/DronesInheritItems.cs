@@ -31,7 +31,12 @@ namespace Basil_ror2
         public static ConfigWrapper<bool> InheritDio;
         public static ConfigWrapper<bool> InheritHappiestMask;
         public static ConfigWrapper<bool> FixBackupDio;
-        public static ConfigWrapper<bool> DronesInherit;
+        public static ConfigWrapper<bool> GunnerDronesInherit;
+        public static ConfigWrapper<bool> HealDronesInherit;
+        public static ConfigWrapper<bool> MissileDronesInherit;
+        public static ConfigWrapper<bool> FlameDronesInherit;
+        public static ConfigWrapper<bool> ProtoDronesInherit;
+        public static ConfigWrapper<bool> EquipDronesInherit;
         public static ConfigWrapper<bool> TurretsInherit;
         public static ConfigWrapper<bool> BackupDronesInherit;
         public static ConfigWrapper<bool> QueenGuardInherit;
@@ -44,13 +49,43 @@ namespace Basil_ror2
             EquipmentIndex.BurnNearby,
             EquipmentIndex.CrippleWard
         };
-        
+
         public void InitConfig()
         {
-            DronesInherit = Config.Wrap(
+            GunnerDronesInherit = Config.Wrap(
                 "Base Inherit Settings",
-                "DronesInherit",
-                "Toggles ONLY purchasable drones to inherit items.",
+                "GunnerDronesInherit",
+                "Toggles Gunner drones to inherit items.",
+                true);
+
+            HealDronesInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "HealDronesInherit",
+                "Toggles Healing drones to inherit items.",
+                true);
+
+            MissileDronesInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "MissileDronesInherit",
+                "Toggles Missile drones to inherit items.",
+                true);
+
+            FlameDronesInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "FlameDronesInherit",
+                "Toggles Incinierator drones to inherit items.",
+                true);
+
+            ProtoDronesInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "ProtoDronesInherit",
+                "Toggles TC-280 Prototype drones to inherit items.",
+                true);
+
+            EquipDronesInherit = Config.Wrap(
+                "Base Inherit Settings",
+                "EquipDronesInherit",
+                "Toggles Equipment drones to inherit items.",
                 true);
 
             TurretsInherit = Config.Wrap(
@@ -179,7 +214,7 @@ namespace Basil_ror2
                 "LunarItems",
                 "Toggles Lunar (blue) items to be inherited/generated.",
                 true);
-            
+
             EquipItems = Config.Wrap(
                 "General Settings",
                 "EquipItems",
@@ -223,12 +258,12 @@ namespace Basil_ror2
                 "Dev notice: If ghosts create other ghosts, damage for the new ghost will\nbe multiplied " +
                 "by 500% ON TOP of the original ghost 500% damage buff.\nThis cycle can continue non stop.",
                 false);
-           
+
         }
 
         public static float ConfigToFloat(string configline)
         {
-            if(float.TryParse(configline,out float x))
+            if (float.TryParse(configline, out float x))
             {
                 return x;
             }
@@ -240,12 +275,12 @@ namespace Basil_ror2
             InitConfig();
 
             Hooks.fixBackupDio();
-            Hooks.baseDrones();
-            Hooks.backupDrones();
+            Hooks.masterSummon();
+            // Hooks.backupDrones();
             Hooks.queensGuard();
             Hooks.spookyGhosts();
             Hooks.updateAfterStage();
-        }     
+        }
 
         public static void checkConfig(Inventory inventory, CharacterMaster master)
         {
@@ -303,7 +338,7 @@ namespace Basil_ror2
                 }
                 if (EquipItems.Value)
                 {
-                    if(Util.CheckRoll(ConfigToFloat(EquipGenChance.Value), master))
+                    if (Util.CheckRoll(ConfigToFloat(EquipGenChance.Value), master))
                     {
                         inventory.ResetItem(ItemIndex.AutoCastEquipment);
                         inventory.GiveItem(ItemIndex.AutoCastEquipment, 1);
@@ -323,16 +358,16 @@ namespace Basil_ror2
                     }
                 }
 
-            // Items that will never be used by the NPCs.
-            inventory.ResetItem(ItemIndex.TreasureCache);
-            inventory.ResetItem(ItemIndex.Feather);
-            inventory.ResetItem(ItemIndex.Firework);
-            inventory.ResetItem(ItemIndex.SprintArmor);
-            inventory.ResetItem(ItemIndex.JumpBoost);
-            inventory.ResetItem(ItemIndex.GoldOnHit);
-            inventory.ResetItem(ItemIndex.WardOnLevel);
-            inventory.ResetItem(ItemIndex.BeetleGland);
-            inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
+                // Items that will never be used by the NPCs.
+                inventory.ResetItem(ItemIndex.TreasureCache);
+                inventory.ResetItem(ItemIndex.Feather);
+                inventory.ResetItem(ItemIndex.Firework);
+                inventory.ResetItem(ItemIndex.SprintArmor);
+                inventory.ResetItem(ItemIndex.JumpBoost);
+                inventory.ResetItem(ItemIndex.GoldOnHit);
+                inventory.ResetItem(ItemIndex.WardOnLevel);
+                inventory.ResetItem(ItemIndex.BeetleGland);
+                inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
 
             }
             else // Default inheritance
@@ -513,6 +548,6 @@ namespace Basil_ror2
             inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
         }
 
-        
+
     }
 }
