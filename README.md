@@ -33,10 +33,6 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 ## FAQ
 
-Q: How does UpdateInventory work?
-
-A: It will update all drone inventories to the items of the **host** after going through a teleporter. I haven't found a way to track the specific player who bought the drone so it will only update drones with the host inventory.
-
 Q: How do you calculate the item max cap for item generation?
 
 A: Currently the way it is done is randomly selecting a value from 0 to the current stage * item max cap, inclusively, for every item.
