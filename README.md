@@ -1,20 +1,19 @@
 # Drones Inherit Items
 ## By Basil
-A mod that allows **all** drones and turrets (and then some) to inherit items from the player when purchased.
+A mod that allows **all** drones and turrets (and then some) to inherit items from the player.
 
-**Has QUEEN GUARDS, GHOSTS, and lots of configuration!** 
+- **Has QUEEN GUARDS, GHOSTS, and lots of configuration!** 
 
-**Don't want to inherit player items but still want things to have items? Now possible with the ItemGenerator option in the config file!**
-*Will ignore inherit settings.*
+- Can update invetories after each stage clear!
 
-**Now has an update drone inventory option!**
+- Can generate items for drones with the ItemGenerator option in the config file! *Will ignore inherit settings.*
 
-All drones and turrets are affected by this mod. It will only inherit the items from a player's inventory at the time of purchase or activation.
+Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 ## Installation
 1. Install [BepInEx Mod Pack](https://thunderstore.io/package/bbepis/BepInExPack/)
-2. Visit the [releases page](https://github.com/BasilPanda/RoR2DronesInheritItems/releases/) or get it [here](https://thunderstore.io/package/BasilPanda/DronesInheritItems/).
-3. Download the latest DronesInheritItems.dll
+2. Install [R2API](https://thunderstore.io/package/tristanmcpherson/R2API/)
+3. Download the latest DronesInheritItems.dll here.
 4. Move DronesInheritItems.dll to your \BepInEx\plugins folder
 
 ## Configuration
@@ -34,6 +33,10 @@ All drones and turrets are affected by this mod. It will only inherit the items 
 
 ## FAQ
 
+Q: How does UpdateInventory work?
+
+A: It will update all drone inventories to the items of the **host** after going through a teleporter. I haven't found a way to track the specific player who bought the drone so it will only update drones with the host inventory.
+
 Q: How do you calculate the item max cap for item generation?
 
 A: Currently the way it is done is randomly selecting a value from 0 to the current stage * item max cap, inclusively, for every item.
@@ -42,21 +45,41 @@ Q: How does the ItemRandomizer setting work?
 
 A: It will randomly choose a value between 0 and the player's item count for the respective item if the setting is true.
 
-## Future Plans
+## Known Bugs
 
-- Allow configuration of settings with an ingame menu! If someone knows how to help, please contact me on Discord!
+- Ghosts not receiving the ghostly appearance when GhostInherit is set to true
 
 ## Changelog
 
-**v2.2.0** UPDATING DRONES PATCH
+**v2.4.0**
+
+- Updated mod for the Scorched Acres patch!
+
+- Added options to toggle inheritance for each individual type of drone (all default to true)
+
+- Both Incinerator & Equipment drones can now inherit player items
+
+- UpdateInventory should now update drones to the player who bought them
+
+**v2.3.1** 
+
+- Fixed a generator setting bug (was using GenCap for GenChance)
+
+**v2.3.0** 
+
+- Updated mod to most recent version of BepInEx and RoR2 patch!
+
+- Added option to toggle either drones or turrets inheritance (both default is set to true)
+
+**v2.2.0** 
 
 - Added option for drones to have their inventories updated to what the host has (default is set to false)
 
-**v2.1.0** EXTRA CONFIG PATCH!
+**v2.1.0** 
 
 - Added item generation and its respective options (default is set to false)
 
-- Added option to inherit equipment. Only works with Queen Guards and Ghosts. (default is set to false)
+- Added option to inherit equipment. Only works with Queen Guards and Ghosts (default is set to false)
 
 - Added float/decimal handling for ItemMultiplier. Possible to now have drones inherit half your items! (default is set to 1)
 
@@ -87,3 +110,7 @@ A: It will randomly choose a value between 0 and the player's item count for the
 **v1.0.0**
 
 - All purchaseable drones and turrets now get player items at time of purchase!
+
+## Other mods
+
+[EnemiesWithItems](https://thunderstore.io/package/BasilPanda/EnemiesWithItems/) (Will be updated on 6/26/2019)

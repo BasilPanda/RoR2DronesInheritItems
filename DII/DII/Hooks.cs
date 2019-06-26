@@ -16,7 +16,9 @@ namespace Basil_ror2
             "Drone1Body",
             "Drone2Body",
             "MegaDroneBody",
-            "MissileDroneBody"
+            "MissileDroneBody",
+            "FlameDroneBody",
+            "EquipmentDroneBody"
         };
 
         // Master names to check
@@ -46,10 +48,10 @@ namespace Basil_ror2
                     {
                         if (bodyprefabNames.Contains(cm.bodyPrefab.name))
                         {
-                            CharacterMaster host = PlayerCharacterMasterController.instances[0].master;
+                            CharacterMaster owner = cm.gameObject.GetComponent<AIOwnership>().ownerMaster;
                             Inventory inventory = cm.inventory;
-                            inventory.CopyItemsFrom(host.inventory);
-                            DII.updateInventory(inventory, host);
+                            inventory.CopyItemsFrom(owner.inventory);
+                            DII.updateInventory(inventory, owner);
 
                         }
                     }
@@ -144,7 +146,7 @@ namespace Basil_ror2
             }
         }
 
-        // Backup Drone inheritance --  NO LONGER NEEDED, CODE REFACTORED TO MASTER SUMMON
+        // Backup Drone inheritance -- SOURCE CODE CHANGED -- UPDATED MODDED CODE 
         public static void backupDrones()
         {
             if (DII.BackupDronesInherit.Value)

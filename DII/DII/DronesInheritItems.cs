@@ -280,7 +280,7 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.turrets();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.4.0 Loaded!");
         }
 
         public static void checkConfig(Inventory inventory, CharacterMaster master)
