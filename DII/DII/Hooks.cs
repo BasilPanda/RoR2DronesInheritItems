@@ -58,57 +58,22 @@ namespace Basil_ror2
             }
         }
 
-        // Ghost inheritance -- NO LONGER NEEDED, CODE REFACTORED TO MASTER SUMMON
+        // Ghost inheritance -- SOURCE CODE CHANGED -- UPDATED MODDED CODE // KNOWN BUG DOESN'T GET GHOST APPEARANCE
         public static void spookyGhosts()
         {
             if (DII.GhostInherit.Value)
             {
                 On.RoR2.Util.TryToCreateGhost += (orig, targetBody, ownerBody, duration) =>
                 {
-                    if (!targetBody || !NetworkServer.active)
+                    CharacterBody characterBody = orig(targetBody, ownerBody, duration);
+                    CharacterMaster cm = characterBody.master;
+                    Inventory inventory = cm.inventory;
+                    if (DII.GhostInherit.Value)
                     {
-                        return null;
-                    }
-                    if (TeamComponent.GetTeamMembers(ownerBody.teamComponent.teamIndex).Count >= 40)
-                    {
-                        return null;
-                    }
-                    int num = BodyCatalog.FindBodyIndex(targetBody.gameObject);
-                    if (num < 0)
-                    {
-                        return null;
-                    }
-                    GameObject bodyPrefab = BodyCatalog.GetBodyPrefab(num);
-                    if (!bodyPrefab)
-                    {
-                        return null;
-                    }
-                    CharacterMaster characterMaster = MasterCatalog.allAiMasters.FirstOrDefault((CharacterMaster master) => master.bodyPrefab == bodyPrefab);
-                    if (!characterMaster)
-                    {
-                        return null;
-                    }
-                    GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(characterMaster.gameObject);
-                    CharacterMaster component = gameObject.GetComponent<CharacterMaster>();
-                    component.teamIndex = ownerBody.teamComponent.teamIndex;
-                    component.GetComponent<BaseAI>().leader.gameObject = ownerBody.gameObject;
-                    Inventory inventory = targetBody.inventory;
-                    if (inventory)
-                    {
-                        component.inventory.CopyItemsFrom(ownerBody.inventory);
-                    }
-                    DII.checkConfig(component.inventory, ownerBody.master);
-                    component.inventory.GiveItem(ItemIndex.Ghost, 1);
-                    component.inventory.GiveItem(ItemIndex.HealthDecay, duration);
-                    component.inventory.GiveItem(ItemIndex.BoostDamage, 30);
-                    NetworkServer.Spawn(gameObject);
-                    CharacterBody characterBody = component.Respawn(targetBody.footPosition, targetBody.transform.rotation, false);
-                    if (characterBody)
-                    {
-                        foreach (EntityStateMachine entityStateMachine in characterBody.GetComponents<EntityStateMachine>())
-                        {
-                            entityStateMachine.initialStateType = entityStateMachine.mainStateType;
-                        }
+                        AIOwnership component2 = cm.gameObject.GetComponent<AIOwnership>();
+                        CharacterMaster master = ownerBody.master;
+                        inventory.CopyItemsFrom(master.inventory);
+                        DII.checkConfig(inventory, master);
                     }
                     return characterBody;
                 };
@@ -358,7 +323,7 @@ namespace Basil_ror2
                     /////////////////
                     /////////////////
                     /////////////////
-
+                    /*
                     // Spooky Ghosts
                     Inventory inventory = gameObject.GetComponent<Inventory>();
                     if (DII.GhostInherit.Value)
@@ -369,6 +334,7 @@ namespace Basil_ror2
                         inventory.CopyItemsFrom(master.inventory);
                         DII.checkConfig(inventory, master);
                     }
+                    */
                 }
                 NetworkServer.Spawn(gameObject);
                 component.Respawn(self.position, self.rotation, false);
@@ -404,7 +370,6 @@ namespace Basil_ror2
                     summonerBodyObject = ((activator != null) ? activator.gameObject : null),
                     ignoreTeamMemberLimit = true
                 }.Perform();
-                Chat.AddMessage(self.masterPrefab.name);
                 if (DII.TurretsInherit.Value && self.masterPrefab.name == "Turret1Master")
                 {
                     Inventory inventory = characterMaster.inventory;

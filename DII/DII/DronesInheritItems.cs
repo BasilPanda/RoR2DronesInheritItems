@@ -274,6 +274,7 @@ namespace Basil_ror2
         {
             InitConfig();
             Hooks.fixBackupDio();
+            Hooks.spookyGhosts();
             Hooks.baseDrones();
             Hooks.backupDrones();
             Hooks.queensGuard();
