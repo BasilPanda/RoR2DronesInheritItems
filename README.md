@@ -123,4 +123,4 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Other mods
 
-[EnemiesWithItems](https://thunderstore.io/package/BasilPanda/EnemiesWithItems/) (Will be updated on 6/26/2019)
+[EnemiesWithItems](https://thunderstore.io/package/BasilPanda/EnemiesWithItems/)
