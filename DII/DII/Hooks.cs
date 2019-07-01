@@ -229,20 +229,13 @@ namespace Basil_ror2
                         num3 *= Mathf.Pow((float)num, 0.5f);
                         component2.inventory.GiveItem(ItemIndex.BoostHp, Mathf.RoundToInt((num2 - 1f) * 10f));
                         component2.inventory.GiveItem(ItemIndex.BoostDamage, Mathf.RoundToInt((num3 - 1f) * 10f));
-                        Chat.AddMessage(component2.GetBody().name);
-                        if(cm == null)
-                        {
-                            Chat.AddMessage("cm is null");
-                        }
-                        else
-                        {
-                            Chat.AddMessage("cm is not null");
-                        }
-                        if (DII.GoldTitanInherit.Value && component2.GetBody().name == "TitanGoldBody" && cm != null)
+                        
+                        if (DII.GoldTitanInherit.Value && component2.GetBody().name == "TitanGoldBody(Clone)" && cm != null)
                         {
                             component2.inventory.CopyItemsFrom(cm.inventory);
                             DII.checkConfig(component2.inventory, cm);
                         }
+
                     }
                 }
             };

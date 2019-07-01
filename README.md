@@ -2,7 +2,7 @@
 ## By Basil
 A mod that allows **all** drones and turrets (and then some) to inherit items from the player.
 
-- **Has QUEEN GUARDS, GHOSTS, and lots of configuration!** 
+- **Has AURELIONITE, QUEEN GUARDS, GHOSTS, and lots of configuration!** 
 
 - Can update inventories after each stage clear!
 
@@ -33,6 +33,10 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 ## FAQ
 
+Q: Who does Aurelionite inherit items from?
+
+A: To whoever owns the item. If there are multiple people who own the item, then it selects whoever comes first in lobby order.
+
 Q: How do you calculate the item max cap for item generation?
 
 A: Currently the way it is done is randomly selecting a value from 0 to the current stage * item max cap, inclusively, for every item.
@@ -46,6 +50,12 @@ A: It will randomly choose a value between 0 and the player's item count for the
 - Ghosts not receiving the ghostly appearance when GhostInherit is set to true
 
 ## Changelog
+
+**v2.4.2**
+
+- Possible fix to no sound on enemy spawn bug (if this still happens PLEASE contact me as I only did 3 runs and always had sound)
+
+- Allied Aurelionite from Halcyon Seed can now inherit items (default to false)
 
 **v2.4.1**
 

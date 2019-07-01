@@ -219,13 +219,13 @@ namespace Basil_ror2
             EquipItems = Config.Wrap(
                 "General Settings",
                 "EquipItems",
-                "Toggles Use items to be inherited/generated. ONLY WORKS FOR QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
+                "Toggles Use items to be inherited/generated. ONLY WORKS FOR AURELIONITE, QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
                 false);
 
             LunarEquips = Config.Wrap(
                 "General Settings",
                 "LunarEquips",
-                "Toggles Lunar Use items to be inherited/generated. ONLY WORKS FOR QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
+                "Toggles Lunar Use items to be inherited/generated. ONLY WORKS FOR AURELIONITE, QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
                 false);
 
             InheritDio = Config.Wrap(
