@@ -6,7 +6,7 @@ using RoR2;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.0")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.1")]
     public class DII : BaseUnityPlugin
     {
         public static ConfigWrapper<string> ItemMultiplier;
@@ -275,12 +275,12 @@ namespace Basil_ror2
             InitConfig();
             Hooks.fixBackupDio();
             Hooks.spookyGhosts();
-            Hooks.baseDrones();
+            //Hooks.baseDrones();
             Hooks.backupDrones();
             Hooks.queensGuard();
-            Hooks.turrets();
+            Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.4.0 Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.4.1 Loaded!");
         }
 
         public static void checkConfig(Inventory inventory, CharacterMaster master)

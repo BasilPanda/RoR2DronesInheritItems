@@ -4,7 +4,7 @@ A mod that allows **all** drones and turrets (and then some) to inherit items fr
 
 - **Has QUEEN GUARDS, GHOSTS, and lots of configuration!** 
 
-- Can update invetories after each stage clear!
+- Can update inventories after each stage clear!
 
 - Can generate items for drones with the ItemGenerator option in the config file! *Will ignore inherit settings.*
 
@@ -46,6 +46,10 @@ A: It will randomly choose a value between 0 and the player's item count for the
 - Ghosts not receiving the ghostly appearance when GhostInherit is set to true
 
 ## Changelog
+
+**v2.4.1**
+
+- Updated README
 
 **v2.4.0**
 

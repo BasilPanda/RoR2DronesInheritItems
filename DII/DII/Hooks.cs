@@ -242,7 +242,7 @@ namespace Basil_ror2
                                 /////////////////
                                 /////////////////
                                 /////////////////
-                                
+                                /*
                                 Inventory inventory = gameObject.GetComponent<Inventory>();
 
                                 // Gunner drones
@@ -281,27 +281,7 @@ namespace Basil_ror2
                                     inventory.CopyItemsFrom(master.inventory);
                                     DII.checkConfig(inventory, master);
                                 }
-                                /*
-                                // All turrets
-                                else if (DII.TurretsInherit.Value && self.masterPrefab.name.ToString() == "Turret1Master")
-                                {
-                                    Chat.AddMessage("Turret start");
-                                    inventory.CopyItemsFrom(master.inventory);
-                                    Chat.AddMessage("Turret middle");
-                                    DII.checkConfig(inventory, master);
-                                    Chat.AddMessage("Turret end");
-                                }
                                 */
-                                /////////////////
-                                /////////////////
-                                /////////////////
-                                /////////////////
-                                // MODDED PART //
-                                /////////////////
-                                /////////////////
-                                /////////////////
-                                /////////////////
-
                             }
                         }
                     }
@@ -315,28 +295,6 @@ namespace Basil_ror2
                 if (action != null)
                 {
                     action(component);
-
-                    /////////////////
-                    /////////////////
-                    /////////////////
-                    /////////////////
-                    // MODDED PART //
-                    /////////////////
-                    /////////////////
-                    /////////////////
-                    /////////////////
-                    /*
-                    // Spooky Ghosts
-                    Inventory inventory = gameObject.GetComponent<Inventory>();
-                    if (DII.GhostInherit.Value)
-                    {
-                        AIOwnership component2 = gameObject.GetComponent<AIOwnership>();
-                        CharacterBody c3 = self.summonerBodyObject.GetComponent<CharacterBody>();
-                        CharacterMaster master = c3.master;
-                        inventory.CopyItemsFrom(master.inventory);
-                        DII.checkConfig(inventory, master);
-                    }
-                    */
                 }
                 NetworkServer.Spawn(gameObject);
                 component.Respawn(self.position, self.rotation, false);
@@ -352,8 +310,8 @@ namespace Basil_ror2
             };
         }
         
-        // Turrets
-        public static void turrets()
+        // Drones and Turrets
+        public static void baseMod()
         {
             On.RoR2.SummonMasterBehavior.OpenSummonReturnMaster += (orig, self, activator) =>
             {
@@ -372,13 +330,52 @@ namespace Basil_ror2
                     summonerBodyObject = ((activator != null) ? activator.gameObject : null),
                     ignoreTeamMemberLimit = true
                 }.Perform();
+
+                Inventory inventory = characterMaster.inventory;
+                CharacterBody cm = activator.GetComponent<CharacterBody>();
+                CharacterMaster master = cm.master;
                 if (DII.TurretsInherit.Value && self.masterPrefab.name == "Turret1Master")
                 {
-                    Inventory inventory = characterMaster.inventory;
-                    CharacterBody cm = activator.GetComponent<CharacterBody>();
-                    CharacterMaster master = cm.master;
                     inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
                 }
+                // Gunner drones
+                else if (DII.GunnerDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone1Master")
+                {
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
+                }
+                // Healer drones
+                else if (DII.HealDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone2Master")
+                {
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
+                }
+                // Missile drones
+                else if (DII.MissileDronesInherit.Value && self.masterPrefab.name.ToString() == "DroneMissileMaster")
+                {
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
+                }
+                // TC-280 Prototype drones
+                else if (DII.ProtoDronesInherit.Value && self.masterPrefab.name.ToString() == "MegaDroneMaster")
+                {
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
+                }
+                // Incinerator drones
+                else if (DII.FlameDronesInherit.Value && self.masterPrefab.name.ToString() == "FlameDroneMaster")
+                {
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
+                }
+                // Equipment drones
+                else if (DII.EquipDronesInherit.Value && self.masterPrefab.name.ToString() == "EquipmentDroneMaster")
+                {
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
+                }
+
                 if (characterMaster)
                 {
                     GameObject bodyObject = characterMaster.GetBodyObject();
