@@ -6,7 +6,7 @@ using RoR2;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.1")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.2")]
     public class DII : BaseUnityPlugin
     {
         public static ConfigWrapper<string> ItemMultiplier;
@@ -41,6 +41,7 @@ namespace Basil_ror2
         public static ConfigWrapper<bool> BackupDronesInherit;
         public static ConfigWrapper<bool> QueenGuardInherit;
         public static ConfigWrapper<bool> GhostInherit;
+        public static ConfigWrapper<bool> GoldTitanInherit;
 
         public static EquipmentIndex[] LunarEquipmentList = new EquipmentIndex[]
         {
@@ -49,7 +50,7 @@ namespace Basil_ror2
             EquipmentIndex.BurnNearby,
             EquipmentIndex.CrippleWard
         };
-
+        
         public void InitConfig()
         {
             GunnerDronesInherit = Config.Wrap(
@@ -259,6 +260,12 @@ namespace Basil_ror2
                 "by 500% ON TOP of the original ghost 500% damage buff.\nThis cycle can continue non stop.",
                 false);
 
+            GoldTitanInherit = Config.Wrap(
+                "General Settings",
+                "GoldTitanInherit",
+                "Toggles allied Aurelionite from Halcyon Seed to inherit/generate items.",
+                false);
+
         }
 
         public static float ConfigToFloat(string configline)
@@ -275,12 +282,12 @@ namespace Basil_ror2
             InitConfig();
             Hooks.fixBackupDio();
             Hooks.spookyGhosts();
-            //Hooks.baseDrones();
+            Hooks.titanGold();
             Hooks.backupDrones();
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.4.1 Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.4.2 Loaded!");
         }
 
         public static void checkConfig(Inventory inventory, CharacterMaster master)
@@ -523,7 +530,6 @@ namespace Basil_ror2
                 inventory.ResetItem(ItemIndex.AutoCastEquipment);
                 inventory.GiveItem(ItemIndex.AutoCastEquipment, 1);
                 inventory.CopyEquipmentFrom(master.inventory);
-
                 if (!LunarEquips.Value)
                 {
                     for (int i = 0; i < LunarEquipmentList.Length; i++)

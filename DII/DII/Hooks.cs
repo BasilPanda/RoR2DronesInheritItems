@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using RoR2;
 using UnityEngine;
 using RoR2.CharacterAI;
@@ -60,7 +61,7 @@ namespace Basil_ror2
             }
         }
 
-        // Ghost inheritance -- SOURCE CODE CHANGED -- UPDATED MODDED CODE // KNOWN BUG DOESN'T GET GHOST APPEARANCE
+        // Ghost inheritance
         public static void spookyGhosts()
         {
             if (DII.GhostInherit.Value)
@@ -82,7 +83,7 @@ namespace Basil_ror2
             }
         }
 
-        // Queen Guard inheritance -- SOURCE CODE CHANGED -- UPDATED MODDED CODE
+        // Queen Guard inheritance
         public static void queensGuard()
         {
             if (DII.QueenGuardInherit.Value)
@@ -146,7 +147,7 @@ namespace Basil_ror2
             }
         }
 
-        // Backup Drone inheritance -- SOURCE CODE CHANGED -- UPDATED MODDED CODE 
+        // Backup Drone inheritance 
         public static void backupDrones()
         {
             if (DII.BackupDronesInherit.Value)
@@ -177,139 +178,76 @@ namespace Basil_ror2
             }
             
         }
-
-        // All Drones inheritance
-        public static void baseDrones()
+        
+        // Aurelionite 
+        public static void titanGold()
         {
-            On.RoR2.MasterSummon.Perform += (orig, self) =>
+            On.RoR2.TeleporterInteraction.TrySpawnTitanGold += (orig, self) =>
             {
-                TeamIndex teamIndex;
-                if (self.teamIndexOverride != null)
+                if (!NetworkServer.active)
                 {
-                    teamIndex = self.teamIndexOverride.Value;
+                    return;
                 }
-                else
+                int num = 0;
+                CharacterMaster cm = null;
+                ReadOnlyCollection<TeamComponent> teamMembers = TeamComponent.GetTeamMembers(TeamIndex.Player);
+                for (int i = 0; i < teamMembers.Count; i++)
                 {
-                    if (!self.summonerBodyObject)
+                    if (Util.LookUpBodyNetworkUser(teamMembers[i].gameObject))
                     {
-                        Debug.LogErrorFormat("Cannot spawn master {0}: No team specified.", new object[]
+                        CharacterBody component = teamMembers[i].GetComponent<CharacterBody>();
+                        if (component && component.inventory)
                         {
-                        self.masterPrefab
-                        });
-                        return null;
-                    }
-                    teamIndex = TeamComponent.GetObjectTeam(self.summonerBodyObject);
-                }
-                if (!self.ignoreTeamMemberLimit)
-                {
-                    TeamDef teamDef = TeamCatalog.GetTeamDef(teamIndex);
-                    if (teamDef == null)
-                    {
-                        Debug.LogErrorFormat("Attempting to spawn master {0} on TeamIndex.None. Is this intentional?", new object[]
-                        {
-                        self.masterPrefab
-                        });
-                        return null;
-                    }
-                    if (teamDef != null && teamDef.softCharacterLimit <= TeamComponent.GetTeamMembers(teamIndex).Count)
-                    {
-                        return null;
-                    }
-                }
-                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(self.masterPrefab, self.position, self.rotation);
-                CharacterMaster component = gameObject.GetComponent<CharacterMaster>();
-                component.teamIndex = teamIndex;
-               
-                if (self.summonerBodyObject)
-                {
-                    AIOwnership component2 = gameObject.GetComponent<AIOwnership>();
-                    if (component2)
-                    {
-                        CharacterBody component3 = self.summonerBodyObject.GetComponent<CharacterBody>();
-                        if (component3)
-                        {
-                            CharacterMaster master = component3.master;
-                            if (master)
-                            {
-                                component2.ownerMaster = master;
-
-                                /////////////////
-                                /////////////////
-                                /////////////////
-                                /////////////////
-                                // MODDED PART //
-                                /////////////////
-                                /////////////////
-                                /////////////////
-                                /////////////////
-                                /*
-                                Inventory inventory = gameObject.GetComponent<Inventory>();
-
-                                // Gunner drones
-                                if (DII.GunnerDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone1Master")
-                                {
-                                    inventory.CopyItemsFrom(master.inventory);
-                                    DII.checkConfig(inventory, master);
-                                }
-                                // Healer drones
-                                else if (DII.HealDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone2Master")
-                                {
-                                    inventory.CopyItemsFrom(master.inventory);
-                                    DII.checkConfig(inventory, master);
-                                }
-                                // Missile drones
-                                else if (DII.MissileDronesInherit.Value && self.masterPrefab.name.ToString() == "DroneMissileMaster")
-                                {
-                                    inventory.CopyItemsFrom(master.inventory);
-                                    DII.checkConfig(inventory, master);
-                                }
-                                // TC-280 Prototype drones
-                                else if (DII.ProtoDronesInherit.Value && self.masterPrefab.name.ToString() == "MegaDroneMaster")
-                                {
-                                    inventory.CopyItemsFrom(master.inventory);
-                                    DII.checkConfig(inventory, master);
-                                }
-                                // Incinerator drones
-                                else if (DII.FlameDronesInherit.Value && self.masterPrefab.name.ToString() == "FlameDroneMaster")
-                                {
-                                    inventory.CopyItemsFrom(master.inventory);
-                                    DII.checkConfig(inventory, master);
-                                }
-                                // Equipment drones
-                                else if (DII.EquipDronesInherit.Value && self.masterPrefab.name.ToString() == "EquipmentDroneMaster")
-                                {
-                                    inventory.CopyItemsFrom(master.inventory);
-                                    DII.checkConfig(inventory, master);
-                                }
-                                */
-                            }
+                            num += component.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP);
+                            cm = component.master;
                         }
                     }
-                    BaseAI component4 = gameObject.GetComponent<BaseAI>();
-                    if (component4)
+                }
+                if (num > 0)
+                {
+                    DirectorPlacementRule placementRule = new DirectorPlacementRule
                     {
-                        component4.leader.gameObject = self.summonerBodyObject;
+                        placementMode = DirectorPlacementRule.PlacementMode.NearestNode,
+                        minDistance = 20f,
+                        maxDistance = 130f,
+                        position = self.transform.position
+                    };
+                    DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(Resources.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscTitanGold"), placementRule, self.GetFieldValue<Xoroshiro128Plus>("rng"));
+                    directorSpawnRequest.ignoreTeamMemberLimit = true;
+                    directorSpawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
+                    GameObject gameObject = DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
+                    if (gameObject)
+                    {
+                        float num2 = 1f;
+                        float num3 = 1f;
+                        num3 += Run.instance.difficultyCoefficient / 8f;
+                        num2 += Run.instance.difficultyCoefficient / 2f;
+                        CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
+                        self.SetFieldValue("titanGoldBossBody", component2.GetBody());
+                        int livingPlayerCount = Run.instance.livingPlayerCount;
+                        num2 *= Mathf.Pow((float)num, 1f);
+                        num3 *= Mathf.Pow((float)num, 0.5f);
+                        component2.inventory.GiveItem(ItemIndex.BoostHp, Mathf.RoundToInt((num2 - 1f) * 10f));
+                        component2.inventory.GiveItem(ItemIndex.BoostDamage, Mathf.RoundToInt((num3 - 1f) * 10f));
+                        Chat.AddMessage(component2.GetBody().name);
+                        if(cm == null)
+                        {
+                            Chat.AddMessage("cm is null");
+                        }
+                        else
+                        {
+                            Chat.AddMessage("cm is not null");
+                        }
+                        if (DII.GoldTitanInherit.Value && component2.GetBody().name == "TitanGoldBody" && cm != null)
+                        {
+                            component2.inventory.CopyItemsFrom(cm.inventory);
+                            DII.checkConfig(component2.inventory, cm);
+                        }
                     }
                 }
-                Action<CharacterMaster> action = self.preSpawnSetupCallback;
-                if (action != null)
-                {
-                    action(component);
-                }
-                NetworkServer.Spawn(gameObject);
-                component.Respawn(self.position, self.rotation, false);
-                CharacterBody body = component.GetBody();
-                if (body)
-                {
-                    foreach (EntityStateMachine entityStateMachine in body.GetComponents<EntityStateMachine>())
-                    {
-                        entityStateMachine.initialStateType = entityStateMachine.mainStateType;
-                    }
-                }
-                return component;
             };
         }
-        
+                
         // Drones and Turrets
         public static void baseMod()
         {
@@ -375,7 +313,6 @@ namespace Basil_ror2
                     inventory.CopyItemsFrom(master.inventory);
                     DII.checkConfig(inventory, master);
                 }
-
                 if (characterMaster)
                 {
                     GameObject bodyObject = characterMaster.GetBodyObject();
