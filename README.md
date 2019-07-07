@@ -8,6 +8,8 @@ A mod that allows **all** drones and turrets (and then some) to inherit items fr
 
 - Can generate items for drones with the ItemGenerator option in the config file! *Will ignore inherit settings.*
 
+By default, only drones and turrets inherit items.
+
 Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 ## Installation
@@ -51,9 +53,13 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.3**
+
+- Updated R2API dependency string
+
 **v2.4.2**
 
-- Possible fix to no sound on enemy spawn bug (if this still happens PLEASE contact me as I only did 3 runs and always had sound)
+- Fixed no sound on enemy spawn bug 
 
 - Allied Aurelionite from Halcyon Seed can now inherit items (default to false)
 
