@@ -22,6 +22,17 @@ namespace Basil_ror2
             "EquipmentDroneBody"
         };
 
+        // Config Drone Values
+        public static Dictionary<string, bool> dict = new Dictionary<string, bool>()
+        {
+            {"Drone1Body", DII.GunnerDronesInherit.Value},
+            {"Drone2Body", DII.HealDronesInherit.Value},
+            {"MegaDroneBody", DII.ProtoDronesInherit.Value},
+            {"MissileDroneBody", DII.MissileDronesInherit.Value},
+            {"FlameDroneBody", DII.FlameDronesInherit.Value},
+            {"EquipmentDroneBody", DII.EquipDronesInherit.Value},
+        };
+
         // Master names to check
         public static String[] masterNames = new String[]
         {
@@ -36,7 +47,7 @@ namespace Basil_ror2
             "TitanGoldMaster"
         };
 
-        // Update inventories after every stage -- NO SOURCE CHANGE
+        // Update inventories after every stage 
         public static void updateAfterStage()
         {
             if (DII.UpdateInventory.Value)
@@ -49,11 +60,13 @@ namespace Basil_ror2
                     {
                         if (bodyprefabNames.Contains(cm.bodyPrefab.name))
                         {
-                            CharacterMaster owner = cm.gameObject.GetComponent<AIOwnership>().ownerMaster;
-                            Inventory inventory = cm.inventory;
-                            inventory.CopyItemsFrom(owner.inventory);
-                            DII.updateInventory(inventory, owner);
-
+                            if (dict[cm.bodyPrefab.name])
+                            {
+                                CharacterMaster owner = cm.gameObject.GetComponent<AIOwnership>().ownerMaster;
+                                Inventory inventory = cm.inventory;
+                                inventory.CopyItemsFrom(owner.inventory);
+                                DII.updateInventory(inventory, owner);
+                            }
                         }
                     }
                     orig(self, nextSceneName);
