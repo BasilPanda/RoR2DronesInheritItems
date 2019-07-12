@@ -13,6 +13,7 @@ namespace Basil_ror2
         public static ConfigWrapper<bool> ItemRandomizer;
         public static ConfigWrapper<bool> ItemGenerator;
         public static ConfigWrapper<bool> UpdateInventory;
+
         public static ConfigWrapper<string> Tier1GenCap;
         public static ConfigWrapper<string> Tier2GenCap;
         public static ConfigWrapper<string> Tier3GenCap;
@@ -23,13 +24,16 @@ namespace Basil_ror2
         public static ConfigWrapper<string> LunarGenChance;
         public static ConfigWrapper<string> EquipGenChance;
         public static ConfigWrapper<bool> LunarEquips;
+
         public static ConfigWrapper<bool> Tier1Items;
         public static ConfigWrapper<bool> Tier2Items;
         public static ConfigWrapper<bool> Tier3Items;
         public static ConfigWrapper<bool> LunarItems;
         public static ConfigWrapper<bool> EquipItems;
+
         public static ConfigWrapper<bool> InheritDio;
         public static ConfigWrapper<bool> InheritHappiestMask;
+
         public static ConfigWrapper<bool> FixBackupDio;
         public static ConfigWrapper<bool> GunnerDronesInherit;
         public static ConfigWrapper<bool> HealDronesInherit;
@@ -43,6 +47,9 @@ namespace Basil_ror2
         public static ConfigWrapper<bool> GhostInherit;
         public static ConfigWrapper<bool> GoldTitanInherit;
 
+        public static ConfigWrapper<string> CustomItemBlacklist;
+        public static ConfigWrapper<string> CustomEquipBlacklist;
+
         public static EquipmentIndex[] LunarEquipmentList = new EquipmentIndex[]
         {
             EquipmentIndex.Meteor,
@@ -50,7 +57,22 @@ namespace Basil_ror2
             EquipmentIndex.BurnNearby,
             EquipmentIndex.CrippleWard
         };
-        
+
+        public static ItemIndex[] ItemsNeverUsed = new ItemIndex[]
+        {
+            ItemIndex.SprintWisp,
+            ItemIndex.TitanGoldDuringTP,
+            ItemIndex.TreasureCache,
+            ItemIndex.Feather,
+            ItemIndex.Firework,
+            ItemIndex.SprintArmor,
+            ItemIndex.JumpBoost,
+            ItemIndex.GoldOnHit,
+            ItemIndex.WardOnLevel,
+            ItemIndex.BeetleGland,
+            ItemIndex.CrippleWardOnLevel
+        };
+
         public void InitConfig()
         {
             GunnerDronesInherit = Config.Wrap(
@@ -265,6 +287,18 @@ namespace Basil_ror2
                 "GoldTitanInherit",
                 "Toggles allied Aurelionite from Halcyon Seed to inherit/generate items.",
                 false);
+
+            CustomItemBlacklist = Config.Wrap(
+                "General Settings",
+                "CustomItemBlacklist",
+                "Enter items ids separated by a comma and a space to blacklist inheritance/generation on certain items. ex) 41, 23, 17 \nItem ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names",
+                "");
+
+            CustomEquipBlacklist = Config.Wrap(
+               "General Settings",
+               "CustomEquipBlacklist",
+               "Enter equipment ids separated by a comma and a space to blacklist inheritance/generation on certain equips. ex) 1, 14, 13 \nEquip ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names",
+               "");
 
         }
 
@@ -544,15 +578,37 @@ namespace Basil_ror2
             }
 
             // Items that will never be used by the NPCs.
-            inventory.ResetItem(ItemIndex.TreasureCache);
-            inventory.ResetItem(ItemIndex.Feather);
-            inventory.ResetItem(ItemIndex.Firework);
-            inventory.ResetItem(ItemIndex.SprintArmor);
-            inventory.ResetItem(ItemIndex.JumpBoost);
-            inventory.ResetItem(ItemIndex.GoldOnHit);
-            inventory.ResetItem(ItemIndex.WardOnLevel);
-            inventory.ResetItem(ItemIndex.BeetleGland);
-            inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
+            foreach (ItemIndex item in ItemsNeverUsed)
+            {
+                inventory.ResetItem(item);
+            }
+
+            // Custom Items Blacklist
+            string[] customItemlist = CustomItemBlacklist.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string item in customItemlist)
+            {
+                int x = 0;
+                if (Int32.TryParse(item, out x))
+                {
+                    inventory.ResetItem(((ItemIndex)x));
+                }
+            }
+
+            // Custom Equip Blacklist
+            string[] customEquiplist = CustomEquipBlacklist.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string equip in customEquiplist)
+            {
+                int x = 0;
+                if (Int32.TryParse(equip, out x))
+                {
+                    if (inventory.GetEquipmentIndex() == (EquipmentIndex)x)
+                    {
+                        inventory.SetEquipmentIndex(EquipmentIndex.None);
+                    }
+                }
+            }
         }
 
 

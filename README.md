@@ -57,6 +57,10 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 - Update inventory will no longer update drone inventories for drone types set to false
 
+- Added custom item blacklist setting
+
+- Added custom equipment blacklist setting
+
 **v2.4.3**
 
 - Updated R2API dependency string
@@ -134,3 +138,4 @@ A: It will randomly choose a value between 0 and the player's item count for the
 ## Other mods
 
 [EnemiesWithItems](https://thunderstore.io/package/BasilPanda/EnemiesWithItems/)
+[RemoveAllyCap](https://thunderstore.io/package/BasilPanda/RemoveAllyCap/)
