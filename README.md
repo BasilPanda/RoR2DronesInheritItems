@@ -53,6 +53,10 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.5**
+
+- Updated to most recent R2API
+
 **v2.4.4**
 
 - Update inventory will no longer update drone inventories for drone types set to false
