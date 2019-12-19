@@ -6,49 +6,51 @@ using RoR2;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.5")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.6")]
     public class DII : BaseUnityPlugin
     {
-        public static ConfigWrapper<string> ItemMultiplier;
-        public static ConfigWrapper<bool> ItemRandomizer;
-        public static ConfigWrapper<bool> ItemGenerator;
-        public static ConfigWrapper<bool> UpdateInventory;
+        public static ConfigEntry<string> ItemMultiplier;
+        public static ConfigEntry<bool> ItemRandomizer;
+        public static ConfigEntry<bool> ItemGenerator;
+        public static ConfigEntry<bool> UpdateInventory;
 
-        public static ConfigWrapper<string> Tier1GenCap;
-        public static ConfigWrapper<string> Tier2GenCap;
-        public static ConfigWrapper<string> Tier3GenCap;
-        public static ConfigWrapper<string> LunarGenCap;
-        public static ConfigWrapper<string> Tier1GenChance;
-        public static ConfigWrapper<string> Tier2GenChance;
-        public static ConfigWrapper<string> Tier3GenChance;
-        public static ConfigWrapper<string> LunarGenChance;
-        public static ConfigWrapper<string> EquipGenChance;
-        public static ConfigWrapper<bool> LunarEquips;
+        public static ConfigEntry<string> Tier1GenCap;
+        public static ConfigEntry<string> Tier2GenCap;
+        public static ConfigEntry<string> Tier3GenCap;
+        public static ConfigEntry<string> LunarGenCap;
+        public static ConfigEntry<string> Tier1GenChance;
+        public static ConfigEntry<string> Tier2GenChance;
+        public static ConfigEntry<string> Tier3GenChance;
+        public static ConfigEntry<string> LunarGenChance;
+        public static ConfigEntry<string> EquipGenChance;
+        public static ConfigEntry<bool> LunarEquips;
 
-        public static ConfigWrapper<bool> Tier1Items;
-        public static ConfigWrapper<bool> Tier2Items;
-        public static ConfigWrapper<bool> Tier3Items;
-        public static ConfigWrapper<bool> LunarItems;
-        public static ConfigWrapper<bool> EquipItems;
+        public static ConfigEntry<bool> Tier1Items;
+        public static ConfigEntry<bool> Tier2Items;
+        public static ConfigEntry<bool> Tier3Items;
+        public static ConfigEntry<bool> LunarItems;
+        public static ConfigEntry<bool> EquipItems;
 
-        public static ConfigWrapper<bool> InheritDio;
-        public static ConfigWrapper<bool> InheritHappiestMask;
+        public static ConfigEntry<bool> InheritDio;
+        public static ConfigEntry<bool> InheritHappiestMask;
 
-        public static ConfigWrapper<bool> FixBackupDio;
-        public static ConfigWrapper<bool> GunnerDronesInherit;
-        public static ConfigWrapper<bool> HealDronesInherit;
-        public static ConfigWrapper<bool> MissileDronesInherit;
-        public static ConfigWrapper<bool> FlameDronesInherit;
-        public static ConfigWrapper<bool> ProtoDronesInherit;
-        public static ConfigWrapper<bool> EquipDronesInherit;
-        public static ConfigWrapper<bool> TurretsInherit;
-        public static ConfigWrapper<bool> BackupDronesInherit;
-        public static ConfigWrapper<bool> QueenGuardInherit;
-        public static ConfigWrapper<bool> GhostInherit;
-        public static ConfigWrapper<bool> GoldTitanInherit;
+        public static ConfigEntry<bool> FixBackupDio;
+        public static ConfigEntry<bool> GunnerDronesInherit;
+        public static ConfigEntry<bool> HealDronesInherit;
+        public static ConfigEntry<bool> MissileDronesInherit;
+        public static ConfigEntry<bool> FlameDronesInherit;
+        public static ConfigEntry<bool> ProtoDronesInherit;
+        public static ConfigEntry<bool> EquipDronesInherit;
+        public static ConfigEntry<bool> EmergencyDronesInherit;
+        public static ConfigEntry<bool> TurretsInherit;
+        public static ConfigEntry<bool> BackupDronesInherit;
+        public static ConfigEntry<bool> QueenGuardInherit;
+        public static ConfigEntry<bool> GhostInherit;
+        public static ConfigEntry<bool> GoldTitanInherit;
 
-        public static ConfigWrapper<string> CustomItemBlacklist;
-        public static ConfigWrapper<string> CustomEquipBlacklist;
+        public static ConfigEntry<string> CustomItemBlacklist;
+        public static ConfigEntry<string> CustomEquipBlacklist;
+        public static ConfigEntry<string> CustomItemCaps;
 
         public static EquipmentIndex[] LunarEquipmentList = new EquipmentIndex[]
         {
@@ -70,235 +72,271 @@ namespace Basil_ror2
             ItemIndex.GoldOnHit,
             ItemIndex.WardOnLevel,
             ItemIndex.BeetleGland,
-            ItemIndex.CrippleWardOnLevel
+            ItemIndex.CrippleWardOnLevel,
+            ItemIndex.TPHealingNova
         };
 
         public void InitConfig()
         {
-            GunnerDronesInherit = Config.Wrap(
+            GunnerDronesInherit = Config.Bind(
                 "Base Inherit Settings",
                 "GunnerDronesInherit",
-                "Toggles Gunner drones to inherit items.",
-                true);
+                true,
+                "Toggles Gunner drones to inherit items."
+                );
 
-            HealDronesInherit = Config.Wrap(
+            HealDronesInherit = Config.Bind(
                 "Base Inherit Settings",
                 "HealDronesInherit",
-                "Toggles Healing drones to inherit items.",
-                true);
+                true,
+                "Toggles Healing drones to inherit items."
+                );
 
-            MissileDronesInherit = Config.Wrap(
+            MissileDronesInherit = Config.Bind(
                 "Base Inherit Settings",
                 "MissileDronesInherit",
-                "Toggles Missile drones to inherit items.",
-                true);
+                true,
+                "Toggles Missile drones to inherit items."
+                );
 
-            FlameDronesInherit = Config.Wrap(
+            FlameDronesInherit = Config.Bind(
                 "Base Inherit Settings",
                 "FlameDronesInherit",
-                "Toggles Incinierator drones to inherit items.",
-                true);
+                true,
+                "Toggles Incinierator drones to inherit items."
+                );
 
-            ProtoDronesInherit = Config.Wrap(
+            ProtoDronesInherit = Config.Bind(
                 "Base Inherit Settings",
                 "ProtoDronesInherit",
-                "Toggles TC-280 Prototype drones to inherit items.",
-                true);
+                true,
+                "Toggles TC-280 Prototype drones to inherit items."
+                );
 
-            EquipDronesInherit = Config.Wrap(
+            EquipDronesInherit = Config.Bind(
                 "Base Inherit Settings",
                 "EquipDronesInherit",
-                "Toggles Equipment drones to inherit items.",
-                true);
+                true,
+                "Toggles Equipment drones to inherit items."
+                );
 
-            TurretsInherit = Config.Wrap(
+            EmergencyDronesInherit = Config.Bind(
+                "Base Inherit Settings",
+                "EmergencyDronesInherit",
+                true,
+                "Toggles Emergency drones to inherit items."
+                );
+
+            TurretsInherit = Config.Bind(
                 "Base Inherit Settings",
                 "TurretsInherit",
-                "Toggles ONLY purchasable turrets to inherit items.",
-                true);
+                true,
+                "Toggles ONLY purchasable turrets to inherit items."
+                );
 
-            BackupDronesInherit = Config.Wrap(
+            BackupDronesInherit = Config.Bind(
                 "Base Inherit Settings",
                 "BackupDronesInherit",
-                "Toggles Backup Drones to inherit items.",
-                true);
+                true,
+                "Toggles Backup Drones to inherit items.");
 
-            ItemMultiplier = Config.Wrap(
+            ItemMultiplier = Config.Bind(
                 "Base Inherit Settings",
                 "ItemMultiplier",
-                "Sets the multiplier for items to be multiplied by when the drones inherit them." +
-                "\nAble to handle decimal values now!",
-                "1");
+                "1",
+                "Sets the multiplier for items to be multiplied by when the drones inherit them."
+                );
 
-            ItemRandomizer = Config.Wrap(
+            ItemRandomizer = Config.Bind(
                 "Base Inherit Settings",
                 "ItemRandomizer",
-                "Toggles random amounts of items to be inherited from the player's inventory.",
-                false
+                false,
+                "Toggles random amounts of items to be inherited from the player's inventory."
                 );
 
-            UpdateInventory = Config.Wrap(
+            UpdateInventory = Config.Bind(
                 "Base Inherit Settings",
                 "UpdateInventory",
-                "Toggles updating drone inventory after every stage completion.",
-                false
+                false,
+                "Toggles updating drone inventory after every stage completion."
                 );
 
-            ItemGenerator = Config.Wrap(
+            ItemGenerator = Config.Bind(
                 "Generator Settings",
                 "ItemGenerator",
-                "Toggles generation of items instead of inheriting items from player's inventory. WILL IGNORE BASE INHERIT SETTINGS IF TRUE.",
-                false
+                false,
+                "Toggles generation of items instead of inheriting items from player's inventory. WILL IGNORE BASE INHERIT SETTINGS IF TRUE."
                 );
 
-            Tier1GenCap = Config.Wrap(
+            Tier1GenCap = Config.Bind(
                 "Generator Settings",
                 "Tier1GenCap",
-                "The multiplicative max item cap for generating Tier 1 (white) items.",
-                "4"
+                "4",
+                "The multiplicative max item cap for generating Tier 1 (white) items."
                 );
 
-            Tier2GenCap = Config.Wrap(
+            Tier2GenCap = Config.Bind(
                 "Generator Settings",
                 "Tier2GenCap",
-                "The multiplicative max item cap for generating Tier 2 (green) items.",
-                "2"
+                "2",
+                "The multiplicative max item cap for generating Tier 2 (green) items."
                 );
 
-            Tier3GenCap = Config.Wrap(
+            Tier3GenCap = Config.Bind(
                 "Generator Settings",
                 "Tier3GenCap",
-                "The multiplicative max item cap for generating Tier 3 (red) items.",
-                "1"
+                "1",
+                "The multiplicative max item cap for generating Tier 3 (red) items."
                 );
 
-            LunarGenCap = Config.Wrap(
+            LunarGenCap = Config.Bind(
                 "Generator Settings",
                 "LunarGenCap",
-                "The multiplicative max item cap for generating Lunar (blue) items.",
-                "1"
+                "1",
+                "The multiplicative max item cap for generating Lunar (blue) items."
                 );
 
-            Tier1GenChance = Config.Wrap(
+            Tier1GenChance = Config.Bind(
                 "Generator Settings",
                 "Tier1GenChance",
-                "The percent chance for generating a Tier 1 (white) item.",
-                "40"
+                "40",
+                "The percent chance for generating a Tier 1 (white) item."
                 );
 
-            Tier2GenChance = Config.Wrap(
+            Tier2GenChance = Config.Bind(
                 "Generator Settings",
                 "Tier2GenChance",
-                "The percent chance for generating a Tier 2 (green) item.",
-                "20"
+                "20",
+                "The percent chance for generating a Tier 2 (green) item."
                 );
 
-            Tier3GenChance = Config.Wrap(
+            Tier3GenChance = Config.Bind(
                 "Generator Settings",
                 "Tier3GenChance",
-                "The percent chance for generating a Tier 3 (red) item.",
-                "1"
+                "1",
+                "The percent chance for generating a Tier 3 (red) item."
                 );
 
-            LunarGenChance = Config.Wrap(
+            LunarGenChance = Config.Bind(
                 "Generator Settings",
                 "LunarGenChance",
-                "The percent chance for generating a Lunar (blue) item.",
-                "0.5"
+                "0.5",
+                "The percent chance for generating a Lunar (blue) item."
                 );
 
-            EquipGenChance = Config.Wrap(
+            EquipGenChance = Config.Bind(
                 "Generator Settings",
                 "EquipGenChance",
-                "The percent chance for generating a Use item.",
-                "10"
+                "10",
+                "The percent chance for generating a Use item."
                 );
 
-            Tier1Items = Config.Wrap(
+            Tier1Items = Config.Bind(
                 "General Settings",
                 "Tier1Items",
-                "Toggles Tier 1 (white) items to be inherited/generated.",
-                true);
+                true,
+                "Toggles Tier 1 (white) items to be inherited/generated."
+                );
 
-            Tier2Items = Config.Wrap(
+            Tier2Items = Config.Bind(
                 "General Settings",
                 "Tier2Items",
-                "Toggles Tier 2 (green) items to be inherited/generated.",
-                true);
+                true,
+                "Toggles Tier 2 (green) items to be inherited/generated."
+                );
 
-            Tier3Items = Config.Wrap(
+            Tier3Items = Config.Bind(
                 "General Settings",
                 "Tier3Items",
-                "Toggles Tier 3 (red) items to be inherited/generated.",
-                true);
+                true,
+                "Toggles Tier 3 (red) items to be inherited/generated."
+                );
 
-            LunarItems = Config.Wrap(
+            LunarItems = Config.Bind(
                 "General Settings",
                 "LunarItems",
-                "Toggles Lunar (blue) items to be inherited/generated.",
-                true);
+                true,
+                "Toggles Lunar (blue) items to be inherited/generated."
+                );
 
-            EquipItems = Config.Wrap(
+            EquipItems = Config.Bind(
                 "General Settings",
                 "EquipItems",
-                "Toggles Use items to be inherited/generated. ONLY WORKS FOR AURELIONITE, QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
-                false);
+                false,
+                "Toggles Use items to be inherited/generated. ONLY WORKS FOR AURELIONITE, QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK."
+                );
 
-            LunarEquips = Config.Wrap(
+            LunarEquips = Config.Bind(
                 "General Settings",
                 "LunarEquips",
-                "Toggles Lunar Use items to be inherited/generated. ONLY WORKS FOR AURELIONITE, QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK.",
-                false);
+                false, 
+                "Toggles Lunar Use items to be inherited/generated. ONLY WORKS FOR AURELIONITE, QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK."
+                );
 
-            InheritDio = Config.Wrap(
+            InheritDio = Config.Bind(
                 "General Settings",
                 "InheritDio",
-                "Toggles Dio's Best Friend to be inherited/generated by ALL types.",
-                true);
+                true,
+                "Toggles Dio's Best Friend to be inherited/generated by ALL types."
+                );
 
-            InheritHappiestMask = Config.Wrap(
+            InheritHappiestMask = Config.Bind(
                 "General Settings",
                 "InheritHappiestMask",
-                "Toggles Happiest Mask to be inherited/generated by ALL types.",
-                true);
+                true,
+                "Toggles Happiest Mask to be inherited/generated by ALL types."
+                );
 
-            FixBackupDio = Config.Wrap(
+            FixBackupDio = Config.Bind(
                 "General Settings",
                 "FixBackupDio",
-                "Makes it so that Backup drones will reinherit the 25 second death timer upon Dio revive.",
-                true);
+                true,
+                 "Makes it so that Backup drones will reinherit the 25 second death timer upon Dio revive."
+                 );
 
-            QueenGuardInherit = Config.Wrap(
+            QueenGuardInherit = Config.Bind(
                 "General Settings",
                 "QueenGuardInherit",
-                "Toggles Queen Guards to inherit/generate items.",
-                false);
+                false,
+                "Toggles Queen Guards to inherit/generate items."
+                );
 
-            GhostInherit = Config.Wrap(
+            GhostInherit = Config.Bind(
                 "General Settings",
                 "GhostInherit",
+                false,
                 "Toggles ghosts spawned from Happiest Mask to inherit/generate items.\n" +
                 "Dev notice: If ghosts create other ghosts, damage for the new ghost will\nbe multiplied " +
-                "by 500% ON TOP of the original ghost 500% damage buff.\nThis cycle can continue non stop.",
-                false);
+                "by 500% ON TOP of the original ghost 500% damage buff.\nThis cycle can continue non stop."
+                );
 
-            GoldTitanInherit = Config.Wrap(
+            GoldTitanInherit = Config.Bind(
                 "General Settings",
                 "GoldTitanInherit",
-                "Toggles allied Aurelionite from Halcyon Seed to inherit/generate items.",
-                false);
+                false,
+                "Toggles allied Aurelionite from Halcyon Seed to inherit/generate items."
+                );
 
-            CustomItemBlacklist = Config.Wrap(
+            CustomItemBlacklist = Config.Bind(
                 "General Settings",
                 "CustomItemBlacklist",
-                "Enter items ids separated by a comma and a space to blacklist inheritance/generation on certain items. ex) 41, 23, 17 \nItem ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names",
-                "");
+                "",
+                "Enter items ids separated by a comma and a space to blacklist inheritance/generation on certain items. ex) 41, 23, 17 \nItem ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
+                );
 
-            CustomEquipBlacklist = Config.Wrap(
+            CustomEquipBlacklist = Config.Bind(
                "General Settings",
                "CustomEquipBlacklist",
-               "Enter equipment ids separated by a comma and a space to blacklist inheritance/generation on certain equips. ex) 1, 14, 13 \nEquip ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names",
-               "");
+               "",
+               "Enter equipment ids separated by a comma and a space to blacklist inheritance/generation on certain equips. ex) 1, 14, 13 \nEquip ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
+               );
+
+            CustomItemCaps = Config.Bind(
+               "General Settings",
+               "CustomItemCaps",
+               "",
+               "Enter item ids as X-Y separated by a comma and a space to apply caps to certain items. X is the item id and Y is the number cap. ex) 0-20, 1-5, 2-1"
+               );
 
         }
 
@@ -321,7 +359,7 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.4.5 Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.4.6 Loaded!");
         }
 
         public static void checkConfig(Inventory inventory, CharacterMaster master)
@@ -399,17 +437,12 @@ namespace Basil_ror2
                         inventory.SetEquipmentIndex(equipmentIndex);
                     }
                 }
-
-                // Items that will never be used by the NPCs.
-                inventory.ResetItem(ItemIndex.TreasureCache);
-                inventory.ResetItem(ItemIndex.Feather);
-                inventory.ResetItem(ItemIndex.Firework);
-                inventory.ResetItem(ItemIndex.SprintArmor);
-                inventory.ResetItem(ItemIndex.JumpBoost);
-                inventory.ResetItem(ItemIndex.GoldOnHit);
-                inventory.ResetItem(ItemIndex.WardOnLevel);
-                inventory.ResetItem(ItemIndex.BeetleGland);
-                inventory.ResetItem(ItemIndex.CrippleWardOnLevel);
+                
+                // Items never used.
+                foreach (ItemIndex item in ItemsNeverUsed)
+                {
+                    inventory.ResetItem(item);
+                }
 
             }
             else // Default inheritance
@@ -583,25 +616,20 @@ namespace Basil_ror2
                 inventory.ResetItem(item);
             }
 
-            // Custom Items Blacklist
-            string[] customItemlist = CustomItemBlacklist.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            customItem(inventory);
+            customEquip(inventory);
+            customItemCap(inventory);
+            
+        }
 
-            foreach (string item in customItemlist)
-            {
-                int x = 0;
-                if (Int32.TryParse(item, out x))
-                {
-                    inventory.ResetItem(((ItemIndex)x));
-                }
-            }
-
+        public static void customEquip(Inventory inventory)
+        {
             // Custom Equip Blacklist
             string[] customEquiplist = CustomEquipBlacklist.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string equip in customEquiplist)
             {
-                int x = 0;
-                if (Int32.TryParse(equip, out x))
+                if (Int32.TryParse(equip, out int x))
                 {
                     if (inventory.GetEquipmentIndex() == (EquipmentIndex)x)
                     {
@@ -611,6 +639,40 @@ namespace Basil_ror2
             }
         }
 
+        public static void customItem(Inventory inventory)
+        {
+            // Custom Items Blacklist
+            string[] customItemlist = CustomItemBlacklist.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string item in customItemlist)
+            {
+                if (Int32.TryParse(item, out int x))
+                {
+                    inventory.ResetItem((ItemIndex)x);
+                }
+            }
+        }
+
+        public static void customItemCap(Inventory inventory)
+        {
+            // Custom item caps
+            string [] customItemCaps = CustomItemCaps.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach(string item in customItemCaps)
+            {
+                string[] temp = item.Split(new[] { '-' });
+                if(temp.Length == 2)
+                {
+                    if (Int32.TryParse(temp[0], out int itemId) && Int32.TryParse(temp[1], out int cap))
+                    {
+                        if(inventory.GetItemCount((ItemIndex)itemId) > cap)
+                        {
+                            inventory.ResetItem((ItemIndex)itemId);
+                            inventory.GiveItem((ItemIndex)itemId, cap);
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }

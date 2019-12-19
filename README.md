@@ -53,16 +53,19 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.6**
+
+- Updated for Hidden Realms patch!
+- Added Custom Item Caps config!
+
 **v2.4.5**
 
-- Updated to most recent R2API
+- Updated for Skills 2.0 patch!
 
 **v2.4.4**
 
 - Update inventory will no longer update drone inventories for drone types set to false
-
 - Added custom item blacklist setting
-
 - Added custom equipment blacklist setting
 
 **v2.4.3**
@@ -72,7 +75,6 @@ A: It will randomly choose a value between 0 and the player's item count for the
 **v2.4.2**
 
 - Fixed no sound on enemy spawn bug 
-
 - Allied Aurelionite from Halcyon Seed can now inherit items (default to false)
 
 **v2.4.1**
@@ -82,11 +84,8 @@ A: It will randomly choose a value between 0 and the player's item count for the
 **v2.4.0**
 
 - Updated mod for the Scorched Acres patch!
-
 - Added options to toggle inheritance for each individual type of drone (all default to true)
-
 - Both Incinerator & Equipment drones can now inherit player items
-
 - UpdateInventory should now update drones to the player who bought them
 
 **v2.3.1** 
@@ -96,7 +95,6 @@ A: It will randomly choose a value between 0 and the player's item count for the
 **v2.3.0** 
 
 - Updated mod to most recent version of BepInEx and RoR2 patch!
-
 - Added option to toggle either drones or turrets inheritance (both default is set to true)
 
 **v2.2.0** 
@@ -106,25 +104,17 @@ A: It will randomly choose a value between 0 and the player's item count for the
 **v2.1.0** 
 
 - Added item generation and its respective options (default is set to false)
-
 - Added option to inherit equipment. Only works with Queen Guards and Ghosts (default is set to false)
-
 - Added float/decimal handling for ItemMultiplier. Possible to now have drones inherit half your items! (default is set to 1)
-
 - Added ItemRandomizer option (default is set to false)
-
 - Added option to have drones and turrets inherit items (default is set to true)
-
 - Added option for Back-up drones to inherit items (default is set to true)
-
 - Added proper fix and option for Back-up drones to reinherit 25s death timer upon Dio's revive (default is set to true)
 
 **v2.0.0**
 
 - Added configuration
-
 - Queen Guards can now inherit items (default is set to false)
-
 - Ghosts from Happiest Mask can now inherit items (default is set to false)
 
 **v1.1.1**

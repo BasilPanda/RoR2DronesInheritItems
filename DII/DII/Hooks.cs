@@ -6,6 +6,8 @@ using RoR2;
 using UnityEngine;
 using RoR2.CharacterAI;
 using UnityEngine.Networking;
+using Mono.Cecil.Cil;
+using MonoMod.Cil;
 
 namespace Basil_ror2
 {
@@ -52,7 +54,7 @@ namespace Basil_ror2
         {
             if (DII.UpdateInventory.Value)
             {
-                On.RoR2.Run.AdvanceStage += (orig, self, nextSceneName) =>
+                On.RoR2.Run.AdvanceStage += (orig, self, nextScene) =>
                 {
                     var masters = CharacterMaster.readOnlyInstancesList;
                     List<CharacterMaster> masterList = masters.Cast<CharacterMaster>().ToList();
@@ -69,7 +71,7 @@ namespace Basil_ror2
                             }
                         }
                     }
-                    orig(self, nextSceneName);
+                    orig(self, nextScene);
                 };
             }
         }
@@ -84,13 +86,10 @@ namespace Basil_ror2
                     CharacterBody characterBody = orig(targetBody, ownerBody, duration);
                     CharacterMaster cm = characterBody.master;
                     Inventory inventory = cm.inventory;
-                    if (DII.GhostInherit.Value)
-                    {
-                        AIOwnership component2 = cm.gameObject.GetComponent<AIOwnership>();
-                        CharacterMaster master = ownerBody.master;
-                        inventory.CopyItemsFrom(master.inventory);
-                        DII.checkConfig(inventory, master);
-                    }
+                    AIOwnership component2 = cm.gameObject.GetComponent<AIOwnership>();
+                    CharacterMaster master = ownerBody.master;
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
                     return characterBody;
                 };
             }
@@ -319,6 +318,12 @@ namespace Basil_ror2
                     inventory.CopyItemsFrom(master.inventory);
                     DII.checkConfig(inventory, master);
                 }
+                // Emergency drones
+                else if (DII.EquipDronesInherit.Value && self.masterPrefab.name.ToString() == "EmergencyDroneMaster")
+                {
+                    inventory.CopyItemsFrom(master.inventory);
+                    DII.checkConfig(inventory, master);
+                }
                 if (characterMaster)
                 {
                     GameObject bodyObject = characterMaster.GetBodyObject();
@@ -374,7 +379,7 @@ namespace Basil_ror2
                         }
                         if (gameObject)
                         {
-                            EffectManager.instance.SpawnEffect(gameObject, new EffectData
+                            EffectManager.SpawnEffect(gameObject, new EffectData
                             {
                                 origin = self.GetFieldValue<Vector3>("deathFootPosition"),
                                 rotation = self.GetPropertyValue<GameObject>("bodyInstanceObject").transform.rotation
