@@ -6,7 +6,7 @@ using RoR2;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.6")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.7")]
     public class DII : BaseUnityPlugin
     {
         public static ConfigEntry<string> ItemMultiplier;
@@ -42,7 +42,8 @@ namespace Basil_ror2
         public static ConfigEntry<bool> ProtoDronesInherit;
         public static ConfigEntry<bool> EquipDronesInherit;
         public static ConfigEntry<bool> EmergencyDronesInherit;
-        public static ConfigEntry<bool> TurretsInherit;
+        public static ConfigEntry<bool> MinigunTurretsInherit;
+        public static ConfigEntry<bool> SquidTurretsInherit;
         public static ConfigEntry<bool> BackupDronesInherit;
         public static ConfigEntry<bool> QueenGuardInherit;
         public static ConfigEntry<bool> GhostInherit;
@@ -127,11 +128,18 @@ namespace Basil_ror2
                 "Toggles Emergency drones to inherit items."
                 );
 
-            TurretsInherit = Config.Bind(
+            MinigunTurretsInherit = Config.Bind(
                 "Base Inherit Settings",
-                "TurretsInherit",
+                "MinigunTurretsInherit",
                 true,
-                "Toggles ONLY purchasable turrets to inherit items."
+                "Toggles ONLY purchasable minigun turrets to inherit items."
+                );
+
+            SquidTurretsInherit = Config.Bind(
+                "Base Inherit Settings",
+                "SquidTurretsInherit",
+                true,
+                "Toggles ONLY squid turrets to inherit items."
                 );
 
             BackupDronesInherit = Config.Bind(
@@ -359,7 +367,8 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.4.6 Loaded!");
+            Hooks.squidInherit();
+            Chat.AddMessage("DronesInheritItems v2.4.7 Loaded!");
         }
 
         public static void checkConfig(Inventory inventory, CharacterMaster master)
@@ -422,7 +431,8 @@ namespace Basil_ror2
                     {
                         inventory.ResetItem(ItemIndex.AutoCastEquipment);
                         inventory.GiveItem(ItemIndex.AutoCastEquipment, 1);
-                        EquipmentIndex equipmentIndex = Run.instance.availableEquipmentDropList[Run.instance.spawnRng.RangeInt(0, Run.instance.availableEquipmentDropList.Count)].equipmentIndex;
+                        //EquipmentIndex equipmentIndex = Run.instance.availableEquipmentDropList[Run.instance.spawnRng.RangeInt(0, Run.instance.availableEquipmentDropList.Count)].equipmentIndex;
+                        EquipmentIndex equipmentIndex = EquipmentCatalog.equipmentList[Run.instance.spawnRng.RangeInt(0, Run.instance.availableEquipmentDropList.Count)];
                         if (!LunarEquips.Value)
                         {
                             for (int i = 0; i < LunarEquipmentList.Length; i++)

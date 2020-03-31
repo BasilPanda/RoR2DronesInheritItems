@@ -191,11 +191,34 @@ namespace Basil_ror2
             
         }
         
-        // Aurelionite 
+        // Aurelionite
         public static void titanGold()
         {
-            On.RoR2.TeleporterInteraction.TrySpawnTitanGold += (orig, self) =>
+            On.RoR2.TeleporterInteraction.ChargingState.TrySpawnTitanGoldServer += (orig, self) =>
             {
+
+                orig(self);
+                CharacterMaster titan = self.GetFieldValue<CharacterMaster>("titanGoldBossMaster");
+                Debug.Log("CM Name: " + titan.ToString() + "\nBody Name:" + titan.GetBody().name);
+                CharacterMaster cm = null;
+                ReadOnlyCollection<TeamComponent> teamMembers = TeamComponent.GetTeamMembers(TeamIndex.Player);
+                for (int i = 0; i < teamMembers.Count; i++)
+                {
+                    if (Util.LookUpBodyNetworkUser(teamMembers[i].gameObject))
+                    {
+                        CharacterBody component = teamMembers[i].GetComponent<CharacterBody>();
+                        if (component && component.inventory)
+                        {
+                            cm = component.master;
+                        }
+                    }
+                }
+                if (DII.GoldTitanInherit.Value && cm != null)
+                {
+                    titan.inventory.CopyItemsFrom(cm.inventory);
+                    DII.checkConfig(titan.inventory, cm);
+                }
+                /*
                 if (!NetworkServer.active)
                 {
                     return;
@@ -224,7 +247,7 @@ namespace Basil_ror2
                         maxDistance = 130f,
                         position = self.transform.position
                     };
-                    DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(Resources.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscTitanGold"), placementRule, self.GetFieldValue<Xoroshiro128Plus>("rng"));
+                    DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(Resources.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscTitanGoldAlly"), placementRule, self.GetFieldValue<Xoroshiro128Plus>("rng"));
                     directorSpawnRequest.ignoreTeamMemberLimit = true;
                     directorSpawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
                     GameObject gameObject = DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
@@ -249,10 +272,43 @@ namespace Basil_ror2
                         }
 
                     }
-                }
+                }*/
             };
+
         }
-                
+        
+
+        // Squid Turrets
+        public static void squidInherit()
+        {
+            IL.RoR2.GlobalEventManager.OnInteractionBegin += il =>
+            {
+                var c = new ILCursor(il);
+                c.GotoNext(
+                    MoveType.After,
+                    i => i.MatchCallvirt("UnityEngine.GameObject", "GetComponent"),
+                    i => i.MatchDup()
+                    );
+                //c.Emit(OpCodes.Ldarg_1);
+                c.EmitDelegate<Action<Interactor, CharacterMaster>>((interactor, component) =>
+                {
+                    if (DII.SquidTurretsInherit.Value)
+                    {
+                        CharacterMaster playerMaster = interactor.GetComponent<CharacterMaster>();
+                        Inventory playerInventory = playerMaster.inventory;
+                        component.inventory.CopyItemsFrom(playerInventory);
+                        DII.checkConfig(component.inventory, playerMaster);
+                    }
+                });
+            };
+            /*
+            On.RoR2.GlobalEventManager.OnInteractionBegin += (orig, self, interactor, interactable, interactableObject) =>
+            {
+
+            };
+            */
+        }
+
         // Drones and Turrets
         public static void baseMod()
         {
@@ -277,7 +333,8 @@ namespace Basil_ror2
                 Inventory inventory = characterMaster.inventory;
                 CharacterBody cm = activator.GetComponent<CharacterBody>();
                 CharacterMaster master = cm.master;
-                if (DII.TurretsInherit.Value && self.masterPrefab.name == "Turret1Master")
+                // Minigun turrets
+                if (DII.MinigunTurretsInherit.Value && self.masterPrefab.name == "Turret1Master")
                 {
                     inventory.CopyItemsFrom(master.inventory);
                     DII.checkConfig(inventory, master);
