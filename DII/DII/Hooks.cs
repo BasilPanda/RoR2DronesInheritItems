@@ -13,6 +13,8 @@ namespace Basil_ror2
 {
     public static class Hooks
     {
+        private static System.Random rand = new System.Random();
+
         // Bodyprefabs to check
         public static String[] bodyprefabNames = new String[]
         {
@@ -218,99 +220,34 @@ namespace Basil_ror2
                     titan.inventory.CopyItemsFrom(cm.inventory);
                     DII.checkConfig(titan.inventory, cm);
                 }
-                /*
-                if (!NetworkServer.active)
-                {
-                    return;
-                }
-                int num = 0;
-                CharacterMaster cm = null;
-                ReadOnlyCollection<TeamComponent> teamMembers = TeamComponent.GetTeamMembers(TeamIndex.Player);
-                for (int i = 0; i < teamMembers.Count; i++)
-                {
-                    if (Util.LookUpBodyNetworkUser(teamMembers[i].gameObject))
-                    {
-                        CharacterBody component = teamMembers[i].GetComponent<CharacterBody>();
-                        if (component && component.inventory)
-                        {
-                            num += component.inventory.GetItemCount(ItemIndex.TitanGoldDuringTP);
-                            cm = component.master;
-                        }
-                    }
-                }
-                if (num > 0)
-                {
-                    DirectorPlacementRule placementRule = new DirectorPlacementRule
-                    {
-                        placementMode = DirectorPlacementRule.PlacementMode.NearestNode,
-                        minDistance = 20f,
-                        maxDistance = 130f,
-                        position = self.transform.position
-                    };
-                    DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest(Resources.Load<SpawnCard>("SpawnCards/CharacterSpawnCards/cscTitanGoldAlly"), placementRule, self.GetFieldValue<Xoroshiro128Plus>("rng"));
-                    directorSpawnRequest.ignoreTeamMemberLimit = true;
-                    directorSpawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
-                    GameObject gameObject = DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
-                    if (gameObject)
-                    {
-                        float num2 = 1f;
-                        float num3 = 1f;
-                        num3 += Run.instance.difficultyCoefficient / 8f;
-                        num2 += Run.instance.difficultyCoefficient / 2f;
-                        CharacterMaster component2 = gameObject.GetComponent<CharacterMaster>();
-                        self.SetFieldValue("titanGoldBossBody", component2.GetBody());
-                        int livingPlayerCount = Run.instance.livingPlayerCount;
-                        num2 *= Mathf.Pow((float)num, 1f);
-                        num3 *= Mathf.Pow((float)num, 0.5f);
-                        component2.inventory.GiveItem(ItemIndex.BoostHp, Mathf.RoundToInt((num2 - 1f) * 10f));
-                        component2.inventory.GiveItem(ItemIndex.BoostDamage, Mathf.RoundToInt((num3 - 1f) * 10f));
-                        
-                        if (DII.GoldTitanInherit.Value && component2.GetBody().name == "TitanGoldBody(Clone)" && cm != null)
-                        {
-                            component2.inventory.CopyItemsFrom(cm.inventory);
-                            DII.checkConfig(component2.inventory, cm);
-                        }
-
-                    }
-                }*/
             };
 
         }
         
-
-        // Squid Turrets **BROKEN**
-        public static void squidInherit()
+        // Squid Turrets 
+        public static void squidInherit(SpawnCard.SpawnResult spawnResult)
         {
-            IL.RoR2.GlobalEventManager.OnInteractionBegin += il =>
+            CharacterMaster squidy = spawnResult.spawnedInstance ? spawnResult.spawnedInstance.GetComponent<CharacterMaster>() : null;
+            if (!squidy)
             {
-                var c = new ILCursor(il);
-                c.GotoNext(
-                    MoveType.After,
-                    i => i.MatchLdfld("UnityEngine.GameObject","spawnedInstance"),
-                    i => i.MatchCallvirt("UnityEngine.GameObject", "GetComponent")
-                    );
-                c.EmitDelegate<Action<Interactor, CharacterMaster>>((interactor, component) =>
-                {
-                    if (DII.SquidTurretsInherit.Value)
-                    {
-                        CharacterMaster playerMaster = interactor.GetComponent<CharacterMaster>();
-                        Inventory playerInventory = playerMaster.inventory;
-                        component.inventory.CopyItemsFrom(playerInventory);
-                        DII.checkConfig(component.inventory, playerMaster);
-                    }
-                });
-            };
-            /*
-            On.RoR2.GlobalEventManager.OnInteractionBegin += (orig, self, interactor, interactable, interactableObject) =>
+                return;
+            }
+            //Debug.Log(squidy.name);
+            if (squidy.name == "SquidTurretMaster(Clone)")
             {
-
-            };
-            */
+                CharacterMaster player = PlayerCharacterMasterController.instances[rand.Next(0, Run.instance.livingPlayerCount)].master;
+                squidy.inventory.CopyItemsFrom(player.inventory);
+                DII.checkConfig(squidy.inventory, player);
+            }
+            
         }
 
         // Drones and Turrets
         public static void baseMod()
         {
+            if (DII.SquidTurretsInherit.Value)
+                SpawnCard.onSpawnedServerGlobal += squidInherit;
+
             On.RoR2.SummonMasterBehavior.OpenSummonReturnMaster += (orig, self, activator) =>
             {
 

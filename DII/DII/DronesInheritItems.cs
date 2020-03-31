@@ -74,7 +74,8 @@ namespace Basil_ror2
             ItemIndex.WardOnLevel,
             ItemIndex.BeetleGland,
             ItemIndex.CrippleWardOnLevel,
-            ItemIndex.TPHealingNova
+            ItemIndex.TPHealingNova,
+            ItemIndex.FocusConvergence
         };
 
         public void InitConfig()
@@ -367,8 +368,6 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            // DO LATER
-            // Hooks.squidInherit();
             Chat.AddMessage("DronesInheritItems v2.4.7 Loaded!");
         }
 

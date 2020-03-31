@@ -1,6 +1,6 @@
 # Drones Inherit Items
 ## By Basil
-A mod that allows **all** drones and turrets (and then some) to inherit items from the player.
+A mod that allows **all** drones and turrets (NOW WITH SQUID TURRETS) to inherit items from the player.
 
 - **Has AURELIONITE, QUEEN GUARDS, GHOSTS, and lots of configuration!** 
 
@@ -35,9 +35,9 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 ## FAQ
 
-Q: Who does Aurelionite inherit items from?
+Q: Who does Aurelionite/Squid Turrets inherit items from?
 
-A: To whoever owns the item. If there are multiple people who own the item, then it selects whoever comes first in lobby order.
+A: To whoever owns the item. If there are multiple people who own the item, then it selects randomly.
 
 Q: How do you calculate the item max cap for item generation?
 
@@ -53,14 +53,19 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.7**
+
+- Updated for the Artifacts update!
+- Added squid inherit setting (default to true)
+
 **v2.4.6**
 
-- Updated for Hidden Realms patch!
+- Updated for Hidden Realms update!
 - Added Custom Item Caps config!
 
 **v2.4.5**
 
-- Updated for Skills 2.0 patch!
+- Updated for Skills 2.0 update!
 
 **v2.4.4**
 
@@ -83,7 +88,7 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 **v2.4.0**
 
-- Updated mod for the Scorched Acres patch!
+- Updated mod for the Scorched Acres update!
 - Added options to toggle inheritance for each individual type of drone (all default to true)
 - Both Incinerator & Equipment drones can now inherit player items
 - UpdateInventory should now update drones to the player who bought them
