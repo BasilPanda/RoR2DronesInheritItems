@@ -278,7 +278,7 @@ namespace Basil_ror2
         }
         
 
-        // Squid Turrets
+        // Squid Turrets **BROKEN**
         public static void squidInherit()
         {
             IL.RoR2.GlobalEventManager.OnInteractionBegin += il =>
@@ -286,10 +286,9 @@ namespace Basil_ror2
                 var c = new ILCursor(il);
                 c.GotoNext(
                     MoveType.After,
-                    i => i.MatchCallvirt("UnityEngine.GameObject", "GetComponent"),
-                    i => i.MatchDup()
+                    i => i.MatchLdfld("UnityEngine.GameObject","spawnedInstance"),
+                    i => i.MatchCallvirt("UnityEngine.GameObject", "GetComponent")
                     );
-                //c.Emit(OpCodes.Ldarg_1);
                 c.EmitDelegate<Action<Interactor, CharacterMaster>>((interactor, component) =>
                 {
                     if (DII.SquidTurretsInherit.Value)

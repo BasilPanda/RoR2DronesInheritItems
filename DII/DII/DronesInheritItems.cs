@@ -367,7 +367,8 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Hooks.squidInherit();
+            // DO LATER
+            // Hooks.squidInherit();
             Chat.AddMessage("DronesInheritItems v2.4.7 Loaded!");
         }
 
