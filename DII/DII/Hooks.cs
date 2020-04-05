@@ -18,23 +18,41 @@ namespace Basil_ror2
         // Bodyprefabs to check
         public static String[] bodyprefabNames = new String[]
         {
+            "SquidTurretBody",
+            "Turret1Body",
             "Drone1Body",
             "Drone2Body",
             "MegaDroneBody",
             "MissileDroneBody",
             "FlameDroneBody",
-            "EquipmentDroneBody"
+            "EquipmentDroneBody",
+            "EmergencyDroneBody"
         };
 
-        // Config Drone Values
-        public static Dictionary<string, bool> dict = new Dictionary<string, bool>()
+        // Master prefabs to check in Open Summon Return. Squid turrets do not get spawned in this method.
+        public static Dictionary<string, bool> masterprefabNames = new Dictionary<string, bool>()
         {
+            { "Turret1Master", DII.MinigunTurretsInherit.Value },
+            { "Drone1Master", DII.GunnerDronesInherit.Value },
+            { "Drone2Master", DII.HealDronesInherit.Value },
+            { "DroneMissileMaster", DII.ProtoDronesInherit.Value},
+            { "MegaDroneMaster", DII.MissileDronesInherit.Value },
+            { "FlameDroneMaster", DII.FlameDronesInherit.Value },
+            { "EquipmentDroneMaster", DII.EquipDronesInherit.Value },
+            { "EmergencyDroneMaster", DII.EmergencyDronesInherit.Value },
+        };
+
+        // Config Values for updating stage
+        public static Dictionary<string, bool> bodyprefabsDict = new Dictionary<string, bool>()
+        {
+            {"Turret1Body", DII.MinigunTurretsInherit.Value },
             {"Drone1Body", DII.GunnerDronesInherit.Value},
             {"Drone2Body", DII.HealDronesInherit.Value},
             {"MegaDroneBody", DII.ProtoDronesInherit.Value},
             {"MissileDroneBody", DII.MissileDronesInherit.Value},
             {"FlameDroneBody", DII.FlameDronesInherit.Value},
             {"EquipmentDroneBody", DII.EquipDronesInherit.Value},
+            {"EmergencyDroneBody", DII.EmergencyDronesInherit.Value},
         };
 
         // Master names to check
@@ -64,12 +82,10 @@ namespace Basil_ror2
                     {
                         if (bodyprefabNames.Contains(cm.bodyPrefab.name))
                         {
-                            if (dict[cm.bodyPrefab.name])
+                            if (bodyprefabsDict[cm.bodyPrefab.name])
                             {
                                 CharacterMaster owner = cm.gameObject.GetComponent<AIOwnership>().ownerMaster;
-                                Inventory inventory = cm.inventory;
-                                inventory.CopyItemsFrom(owner.inventory);
-                                DII.updateInventory(inventory, owner);
+                                DII.updateInventory(cm, owner);
                             }
                         }
                     }
@@ -87,11 +103,11 @@ namespace Basil_ror2
                 {
                     CharacterBody characterBody = orig(targetBody, ownerBody, duration);
                     CharacterMaster cm = characterBody.master;
-                    Inventory inventory = cm.inventory;
                     AIOwnership component2 = cm.gameObject.GetComponent<AIOwnership>();
                     CharacterMaster master = ownerBody.master;
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
+                    DII.checkConfig(cm, master);
+                    // I'm dumb and didn't realize this was an item for the ghost effect for over 5 months...
+                    cm.inventory.GiveItem(ItemIndex.Ghost, 1);
                     return characterBody;
                 };
             }
@@ -127,9 +143,8 @@ namespace Basil_ror2
                                 {
                                     CharacterMaster component = gameObject.GetComponent<CharacterMaster>();
                                     Inventory inventory = gameObject.GetComponent<Inventory>();
-
-                                    inventory.CopyItemsFrom(self.inventory);
-                                    DII.checkConfig(inventory, self.master);
+                                    
+                                    DII.checkConfig(component, self.master);
 
                                     AIOwnership component2 = gameObject.GetComponent<AIOwnership>();
                                     BaseAI component3 = gameObject.GetComponent<BaseAI>();
@@ -181,11 +196,9 @@ namespace Basil_ror2
                         summonerBodyObject = self.gameObject,
                         ignoreTeamMemberLimit = false
                     }.Perform();
-                    Inventory inventory = characterMaster.inventory;
                     if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster")
                     {
-                        inventory.CopyItemsFrom(characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster.inventory);
-                        DII.checkConfig(inventory, characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster);
+                        DII.checkConfig(characterMaster, characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster);
                     }
                     return characterMaster;
                 };
@@ -201,7 +214,6 @@ namespace Basil_ror2
 
                 orig(self);
                 CharacterMaster titan = self.GetFieldValue<CharacterMaster>("titanGoldBossMaster");
-                Debug.Log("CM Name: " + titan.ToString() + "\nBody Name:" + titan.GetBody().name);
                 CharacterMaster cm = null;
                 ReadOnlyCollection<TeamComponent> teamMembers = TeamComponent.GetTeamMembers(TeamIndex.Player);
                 for (int i = 0; i < teamMembers.Count; i++)
@@ -217,8 +229,7 @@ namespace Basil_ror2
                 }
                 if (DII.GoldTitanInherit.Value && cm != null)
                 {
-                    titan.inventory.CopyItemsFrom(cm.inventory);
-                    DII.checkConfig(titan.inventory, cm);
+                    DII.checkConfig(titan, cm);
                 }
             };
 
@@ -236,8 +247,11 @@ namespace Basil_ror2
             if (squidy.name == "SquidTurretMaster(Clone)")
             {
                 CharacterMaster player = PlayerCharacterMasterController.instances[rand.Next(0, Run.instance.livingPlayerCount)].master;
-                squidy.inventory.CopyItemsFrom(player.inventory);
-                DII.checkConfig(squidy.inventory, player);
+                DII.checkConfig(squidy, player);
+                if(DII.FixSquid.Value)
+                {
+                    squidy.inventory.GiveItem(ItemIndex.HealthDecay,(int)Math.Ceiling(DII.ConfigToFloat(DII.SquidHealthDecay.Value)));
+                }
             }
             
         }
@@ -269,54 +283,16 @@ namespace Basil_ror2
                 Inventory inventory = characterMaster.inventory;
                 CharacterBody cm = activator.GetComponent<CharacterBody>();
                 CharacterMaster master = cm.master;
-                // Minigun turrets
-                if (DII.MinigunTurretsInherit.Value && self.masterPrefab.name == "Turret1Master")
+
+                // Now searches all through keys
+                if(masterprefabNames.Keys.Contains(self.masterPrefab.name))
                 {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
+                    if (masterprefabNames[self.masterPrefab.name])
+                    {
+                        DII.checkConfig(characterMaster, master);
+                    }
                 }
-                // Gunner drones
-                else if (DII.GunnerDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone1Master")
-                {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
-                }
-                // Healer drones
-                else if (DII.HealDronesInherit.Value && self.masterPrefab.name.ToString() == "Drone2Master")
-                {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
-                }
-                // Missile drones
-                else if (DII.MissileDronesInherit.Value && self.masterPrefab.name.ToString() == "DroneMissileMaster")
-                {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
-                }
-                // TC-280 Prototype drones
-                else if (DII.ProtoDronesInherit.Value && self.masterPrefab.name.ToString() == "MegaDroneMaster")
-                {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
-                }
-                // Incinerator drones
-                else if (DII.FlameDronesInherit.Value && self.masterPrefab.name.ToString() == "FlameDroneMaster")
-                {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
-                }
-                // Equipment drones
-                else if (DII.EquipDronesInherit.Value && self.masterPrefab.name.ToString() == "EquipmentDroneMaster")
-                {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
-                }
-                // Emergency drones
-                else if (DII.EquipDronesInherit.Value && self.masterPrefab.name.ToString() == "EmergencyDroneMaster")
-                {
-                    inventory.CopyItemsFrom(master.inventory);
-                    DII.checkConfig(inventory, master);
-                }
+
                 if (characterMaster)
                 {
                     GameObject bodyObject = characterMaster.GetBodyObject();
@@ -356,7 +332,7 @@ namespace Basil_ror2
                     {
                         self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"),
                             Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), false);
-                        self.gameObject.AddComponent<MasterSuicideOnTimer>().lifeTimer = 25f + UnityEngine.Random.Range(0f, 3f);
+                        self.gameObject.AddComponent<MasterSuicideOnTimer>().lifeTimer = DII.ConfigToFloat(DII.BackupDeathTimer.Value) + UnityEngine.Random.Range(0f, 3f);
                     }
                     else
                     {
@@ -382,5 +358,6 @@ namespace Basil_ror2
                 };
             }
         }
+        
     }
 }
