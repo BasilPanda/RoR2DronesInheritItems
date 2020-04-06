@@ -139,8 +139,6 @@ namespace Basil_ror2
             ItemIndex.TPHealingNova,
             ItemIndex.FocusConvergence
         };
-
-        public static Blacklist blacklist;
         
         public void InitConfig()
         {
@@ -990,11 +988,13 @@ namespace Basil_ror2
                 customItemCap(cm);
             } else
             {
-                foreach (BlacklistProperties blp in blacklist.blacklistProperties)
+                //Debug.Log(cm.name);
+                Blacklist blacklist = new Blacklist();
+                foreach (BlacklistProperties blp in blacklist.getList())
                 {
                     if(cm.name == blp.id)
                     {
-                        if(blp.EquipBlacklist != null)
+                        if(blp.EquipBlacklist != "")
                         {
                             customEquip(cm, blp.EquipBlacklist);
                         }
