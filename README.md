@@ -53,6 +53,11 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.8**
+
+- Updated for R2API v2.4.10
+- Major configuration update allowing for custom blacklisting for specific allies.
+
 **v2.4.7**
 
 - Updated for the Artifacts update!
