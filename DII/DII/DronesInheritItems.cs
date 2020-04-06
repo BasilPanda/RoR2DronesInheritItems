@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using System.Collections.Generic;
+using UnityEngine;
 using RoR2;
 using System;
 
@@ -82,15 +84,15 @@ namespace Basil_ror2
         public static ConfigEntry<string> CBItemHealDrone;
         public static ConfigEntry<string> CBItemCapHealDrone;
 
-        public static ConfigEntry<string> CBItemProtoDrone;
-        public static ConfigEntry<string> CBItemCapProtoDrone;
+        public static ConfigEntry<string> CBItemMegaDrone;
+        public static ConfigEntry<string> CBItemCapMegaDrone;
 
         public static ConfigEntry<string> CBItemMissileDrone;
         public static ConfigEntry<string> CBItemCapMissileDrone;
 
         public static ConfigEntry<string> CBItemFlameDrone;
         public static ConfigEntry<string> CBItemCapFlameDrone;
-        
+
         public static ConfigEntry<string> CBItemBackup;
         public static ConfigEntry<string> CBItemCapBackup;
 
@@ -138,6 +140,8 @@ namespace Basil_ror2
             ItemIndex.FocusConvergence
         };
 
+        public static Blacklist blacklist;
+        
         public void InitConfig()
         {
             #region Base Inherit Settings
@@ -447,7 +451,7 @@ namespace Basil_ror2
 
             CustomItemCapsAll = Config.Bind(
                 "Blacklist Settings",
-                "CustomItemCaps",
+                "CustomItemCapsAll",
                 "",
                 "Enter item ids as X-Y separated by a comma and a space to apply caps to certain items. X is the item id and Y is the number cap. ex) 0-20, 1-5, 2-1"
                 );
@@ -528,16 +532,16 @@ namespace Basil_ror2
 
             #region Mega Drone
 
-            CBItemProtoDrone = Config.Bind(
+            CBItemMegaDrone = Config.Bind(
                 "Blacklist Settings",
-                "CBItemProtoDrone",
+                "CBItemMegaDrone",
                 "",
                 "Blacklist items targeting TC-280 drones. Enter item ids the same way as CustomItemBlacklistAll."
                 );
 
-            CBItemCapProtoDrone = Config.Bind(
+            CBItemCapMegaDrone = Config.Bind(
                 "Blacklist Settings",
-                "CBItemCapProtoDrone",
+                "CBItemCapMegaDrone",
                 "",
                 "Cap items for TC-280 drones. Enter ids the same way as CustomItemCapsAll."
                 );
@@ -579,7 +583,25 @@ namespace Basil_ror2
                 );
 
             #endregion Flame Drone
-            
+
+            #region Backup Drone
+
+            CBItemBackup = Config.Bind(
+                "Blacklist Settings",
+                "CBItemBackup",
+                "",
+                "Blacklist items targeting The Backup drones. Enter item ids the same way as CustomItemBlacklistAll."
+                );
+
+            CBItemCapBackup = Config.Bind(
+                "Blacklist Settings",
+                "CBItemCapBackup",
+                "",
+                "Cap items for The Backup drones. Enter ids the same way as CustomItemCapsAll."
+                );
+
+            #endregion Flame Drone
+
             #region EmergencyDrone
 
             CBItemEmergencyDrone = Config.Bind(
@@ -968,7 +990,35 @@ namespace Basil_ror2
                 customItemCap(cm);
             } else
             {
+                foreach (BlacklistProperties blp in blacklist.blacklistProperties)
+                {
+                    if(cm.name == blp.id)
+                    {
+                        if(blp.EquipBlacklist != null)
+                        {
+                            customEquip(cm, blp.EquipBlacklist);
+                        }
+                        customItem(cm, blp.ItemBlacklist);
+                        customItem(cm, blp.ItemCaps);
+                    }
+                }
+            }
+        }
 
+        public static void customEquip(CharacterMaster cm, string customEquipList)
+        {
+            // Custom Equip Blacklist
+            string[] customEquiplist = customEquipList.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string equip in customEquiplist)
+            {
+                if (Int32.TryParse(equip, out int x))
+                {
+                    if (cm.inventory.GetEquipmentIndex() == (EquipmentIndex)x)
+                    {
+                        cm.inventory.SetEquipmentIndex(EquipmentIndex.None);
+                    }
+                }
             }
         }
 
@@ -989,6 +1039,20 @@ namespace Basil_ror2
             }
         }
 
+        public static void customItem(CharacterMaster cm, string customItemList)
+        {
+            // Custom Items Blacklist
+            string[] customItemlist = customItemList.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string item in customItemlist)
+            {
+                if (Int32.TryParse(item, out int x))
+                {
+                    cm.inventory.ResetItem((ItemIndex)x);
+                }
+            }
+        }
+
         public static void customItem(CharacterMaster cm)
         {
             // Custom Items Blacklist
@@ -999,6 +1063,27 @@ namespace Basil_ror2
                 if (Int32.TryParse(item, out int x))
                 {
                     cm.inventory.ResetItem((ItemIndex)x);
+                }
+            }
+        }
+
+        public static void customItemCap(CharacterMaster cm, string customCaps)
+        {
+            // Custom item caps
+            string[] customItemCaps = customCaps.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string item in customItemCaps)
+            {
+                string[] temp = item.Split(new[] { '-' });
+                if (temp.Length == 2)
+                {
+                    if (Int32.TryParse(temp[0], out int itemId) && Int32.TryParse(temp[1], out int cap))
+                    {
+                        if (cm.inventory.GetItemCount((ItemIndex)itemId) > cap)
+                        {
+                            cm.inventory.ResetItem((ItemIndex)itemId);
+                            cm.inventory.GiveItem((ItemIndex)itemId, cap);
+                        }
+                    }
                 }
             }
         }

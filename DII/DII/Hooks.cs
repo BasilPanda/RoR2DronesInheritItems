@@ -30,7 +30,7 @@ namespace Basil_ror2
         };
 
         // Master prefabs to check in Open Summon Return. Squid turrets do not get spawned in this method.
-        public static Dictionary<string, bool> masterprefabNames = new Dictionary<string, bool>()
+        public static Dictionary<string, bool> masterPrefabNamesSummonReturn = new Dictionary<string, bool>()
         {
             { "Turret1Master", DII.MinigunTurretsInherit.Value },
             { "Drone1Master", DII.GunnerDronesInherit.Value },
@@ -66,7 +66,10 @@ namespace Basil_ror2
             "MegaDroneMaster",
             "FlameDroneMaster",
             "EquipmentDroneMaster",
-            "TitanGoldMaster"
+            "TitanGoldMaster",
+            "EmergencyDroneMaster",
+            "BeetleGuardAllyMaster",
+            "DroneBackupMaster"
         };
 
         // Update inventories after every stage 
@@ -285,9 +288,9 @@ namespace Basil_ror2
                 CharacterMaster master = cm.master;
 
                 // Now searches all through keys
-                if(masterprefabNames.Keys.Contains(self.masterPrefab.name))
+                if(masterPrefabNamesSummonReturn.Keys.Contains(self.masterPrefab.name))
                 {
-                    if (masterprefabNames[self.masterPrefab.name])
+                    if (masterPrefabNamesSummonReturn[self.masterPrefab.name])
                     {
                         DII.checkConfig(characterMaster, master);
                     }
