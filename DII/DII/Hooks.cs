@@ -231,7 +231,7 @@ namespace Basil_ror2
                         }
                     }
                 }
-                if (DII.GoldTitanInherit.Value && cm != null)
+                if (DII.GoldTitanInherit.Value && cm != null && titan != null)
                 {
                     DII.checkConfig(titan, cm);
                 }
