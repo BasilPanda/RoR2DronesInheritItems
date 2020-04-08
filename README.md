@@ -49,13 +49,18 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Known Bugs
 
-- Ghosts not receiving the ghostly appearance when GhostInherit is set to true
+- None at the moment!
 
 ## Changelog
+
+**v2.4.9**
+
+- Fixed squid turret preventing progression to next stage when having update after every stage option on
 
 **v2.4.8**
 
 - Updated for R2API v2.4.10
+- Ghost inherits now have ghostly effect (forgot to put this in last update)
 - Major configuration update allowing for custom blacklisting for specific allies.
 
 **v2.4.7**

@@ -45,6 +45,7 @@ namespace Basil_ror2
         // Config Values for updating stage
         public static Dictionary<string, bool> bodyprefabsDict = new Dictionary<string, bool>()
         {
+            {"SquidTurretBody", DII.SquidTurretsInherit.Value },
             {"Turret1Body", DII.MinigunTurretsInherit.Value },
             {"Drone1Body", DII.GunnerDronesInherit.Value},
             {"Drone2Body", DII.HealDronesInherit.Value},
