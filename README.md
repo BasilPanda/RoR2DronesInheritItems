@@ -53,6 +53,10 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.11**
+
+- Fixed the return of the squid turret preventing progression bug again to next stage when having update after every stage option on. Thanks to @Solacex#4276 for reporting it!
+
 **v2.4.10**
 
 - Fixed teleporter bubble not showing up bug. Thanks to @Vashzaron#7672 for reporting it!

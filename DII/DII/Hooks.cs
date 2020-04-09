@@ -86,6 +86,10 @@ namespace Basil_ror2
                     {
                         if (bodyprefabNames.Contains(cm.bodyPrefab.name))
                         {
+                            if(cm.bodyPrefab.name == "SquidTurretBody")
+                            {
+                                continue;
+                            }
                             if (bodyprefabsDict[cm.bodyPrefab.name])
                             {
                                 CharacterMaster owner = cm.gameObject.GetComponent<AIOwnership>().ownerMaster;
