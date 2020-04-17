@@ -116,6 +116,9 @@ namespace Basil_ror2
                     DII.checkConfig(cm, master);
                     // I'm dumb and didn't realize this was an item for the ghost effect for over 5 months...
                     cm.inventory.GiveItem(ItemIndex.Ghost, 1);
+                    DII.customItem(cm, DII.CBItemGhosts.Value);
+                    DII.customItemCap(cm, DII.CBItemCapGhosts.Value);
+                    DII.customEquip(cm, DII.CBEquipGhosts.Value);
                     return characterBody;
                 };
             }
@@ -254,7 +257,8 @@ namespace Basil_ror2
             //Debug.Log(squidy.name);
             if (squidy.name == "SquidTurretMaster(Clone)")
             {
-                CharacterMaster player = PlayerCharacterMasterController.instances[rand.Next(0, Run.instance.livingPlayerCount)].master;
+                //CharacterMaster player = PlayerCharacterMasterController.instances[rand.Next(0, Run.instance.livingPlayerCount)].master;
+                CharacterMaster player = spawnResult.spawnRequest.summonerBodyObject.GetComponent<CharacterBody>().master;
                 DII.checkConfig(squidy, player);
                 if(DII.FixSquid.Value)
                 {
@@ -298,6 +302,10 @@ namespace Basil_ror2
                     if (masterPrefabNamesSummonReturn[self.masterPrefab.name])
                     {
                         DII.checkConfig(characterMaster, master);
+                        if(self.masterPrefab.name == "Drone2Master")
+                        {
+                            characterMaster.inventory.ResetItem(ItemIndex.LunarPrimaryReplacement);
+                        }
                     }
                 }
 

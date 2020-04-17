@@ -8,7 +8,7 @@ using System;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.11")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.12")]
     public class DII : BaseUnityPlugin
     {
         #region General Config Wrappers
@@ -113,6 +113,10 @@ namespace Basil_ror2
         public static ConfigEntry<string> CBItemTitan;
         public static ConfigEntry<string> CBEquipTitan;
         public static ConfigEntry<string> CBItemCapTitan;
+
+        public static ConfigEntry<string> CBItemGhosts;
+        public static ConfigEntry<string> CBEquipGhosts;
+        public static ConfigEntry<string> CBItemCapGhosts;
         #endregion 
 
         public static EquipmentIndex[] LunarEquipmentList = new EquipmentIndex[]
@@ -139,7 +143,7 @@ namespace Basil_ror2
             ItemIndex.TPHealingNova,
             ItemIndex.FocusConvergence
         };
-        
+
         public void InitConfig()
         {
             #region Base Inherit Settings
@@ -349,7 +353,7 @@ namespace Basil_ror2
             LunarEquips = Config.Bind(
                 "General Settings",
                 "LunarEquips",
-                false, 
+                false,
                 "Toggles Lunar Use items to be inherited/generated. ONLY WORKS FOR AURELIONITE, QUEEN'S GUARD AND GHOSTS FROM HAPPIEST MASK."
                 );
 
@@ -464,7 +468,7 @@ namespace Basil_ror2
                 "",
                 "Blacklist items targeting squid turrets. Enter item ids the same way as CustomItemBlacklistAll."
                 );
-            
+
             CBItemCapSquid = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapSquid",
@@ -545,7 +549,7 @@ namespace Basil_ror2
                 );
 
             #endregion Mega Drone
-            
+
             #region Missile Drone
 
             CBItemMissileDrone = Config.Bind(
@@ -563,7 +567,7 @@ namespace Basil_ror2
                 );
 
             #endregion Missile Drone
-            
+
             #region FlameDrone
 
             CBItemFlameDrone = Config.Bind(
@@ -691,7 +695,32 @@ namespace Basil_ror2
                 );
 
             #endregion Titan
-            
+
+            #region Ghosts
+
+            CBItemGhosts = Config.Bind(
+                "Blacklist Settings",
+                "CBItemGhosts",
+                "",
+                "Blacklist items targeting Ghosts. Enter item ids the same way as CustomItemBlacklistAll."
+                );
+
+            CBEquipGhosts = Config.Bind(
+                "Blacklist Settings",
+                "CBEquipGhosts",
+                "",
+                "Blacklist equips targeting Ghosts. Enter equip ids the same way as CustomEquipBlacklistAll."
+                );
+
+            CBItemCapGhosts = Config.Bind(
+                "Blacklist Settings",
+                "CBItemCapGhosts",
+                "",
+                "Cap items for Ghosts. Enter ids the same way as CustomItemCapsAll."
+                );
+
+            #endregion Ghosts
+
             #endregion Blacklist Settings END
 
         }
@@ -715,7 +744,7 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.4.11 Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.4.12 Loaded!");
         }
 
         public static void checkConfig(CharacterMaster cm, CharacterMaster master)

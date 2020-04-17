@@ -35,7 +35,7 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 ## FAQ
 
-Q: Who does Aurelionite/Squid Turrets inherit items from?
+Q: Who does Aurelionite inherit items from?
 
 A: To whoever owns the item. If there are multiple people who own the item, then it selects randomly.
 
@@ -52,6 +52,12 @@ A: It will randomly choose a value between 0 and the player's item count for the
 - None at the moment!
 
 ## Changelog
+
+**v2.4.12**
+
+- Squid Turrets should now inherit from the person who activated instead of randomly choosing a player in coop situations.
+- Permenently blacklisted Visions of Heresy on Healing Drones.
+- Added custom blacklist options for Ghosts.
 
 **v2.4.11**
 
