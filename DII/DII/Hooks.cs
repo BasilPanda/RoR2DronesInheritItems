@@ -115,10 +115,12 @@ namespace Basil_ror2
                     CharacterMaster master = ownerBody.master;
                     DII.checkConfig(cm, master);
                     // I'm dumb and didn't realize this was an item for the ghost effect for over 5 months...
-                    cm.inventory.GiveItem(ItemIndex.Ghost, 1);
                     DII.customItem(cm, DII.CBItemGhosts.Value);
                     DII.customItemCap(cm, DII.CBItemCapGhosts.Value);
                     DII.customEquip(cm, DII.CBEquipGhosts.Value);
+                    cm.inventory.GiveItem(ItemIndex.Ghost, 1);
+                    cm.inventory.ResetItem(ItemIndex.HealthDecay);
+                    cm.inventory.GiveItem(ItemIndex.HealthDecay, duration);
                     return characterBody;
                 };
             }

@@ -53,10 +53,14 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.13**
+
+- Ghosts should decay as intended now. Thanks to @Vashzaron#7672 for reporting it!
+
 **v2.4.12**
 
 - Squid Turrets should now inherit from the person who activated instead of randomly choosing a player in coop situations.
-- Permenently blacklisted Visions of Heresy on Healing Drones.
+- Permanently blacklisted Visions of Heresy on Healing Drones.
 - Added custom blacklist options for Ghosts.
 
 **v2.4.11**
