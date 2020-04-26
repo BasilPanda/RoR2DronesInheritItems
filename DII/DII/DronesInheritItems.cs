@@ -8,7 +8,7 @@ using System;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.13")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.14")]
     public class DII : BaseUnityPlugin
     {
         #region General Config Wrappers
@@ -744,7 +744,7 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.4.13 Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.4.14 Loaded!");
         }
 
         public static void checkConfig(CharacterMaster cm, CharacterMaster master)

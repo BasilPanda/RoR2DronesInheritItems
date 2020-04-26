@@ -53,6 +53,10 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 ## Changelog
 
+**v2.4.14**
+
+- Fixed multiplayer latency issues. Thanks to @terribleperson#7284 for reporting it!
+
 **v2.4.13**
 
 - Ghosts should decay as intended now. Thanks to @Vashzaron#7672 for reporting it!

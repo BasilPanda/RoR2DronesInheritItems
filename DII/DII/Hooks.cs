@@ -110,6 +110,10 @@ namespace Basil_ror2
                 On.RoR2.Util.TryToCreateGhost += (orig, targetBody, ownerBody, duration) =>
                 {
                     CharacterBody characterBody = orig(targetBody, ownerBody, duration);
+                    if(characterBody == null)
+                    {
+                        return null;
+                    }
                     CharacterMaster cm = characterBody.master;
                     AIOwnership component2 = cm.gameObject.GetComponent<AIOwnership>();
                     CharacterMaster master = ownerBody.master;
@@ -209,9 +213,10 @@ namespace Basil_ror2
                         summonerBodyObject = self.gameObject,
                         ignoreTeamMemberLimit = false
                     }.Perform();
-                    if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster")
+                    if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster" && characterMaster != null)
                     {
                         DII.checkConfig(characterMaster, characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster);
+                        characterMaster.inventory.ResetItem(ItemIndex.AutoCastEquipment);
                     }
                     return characterMaster;
                 };
