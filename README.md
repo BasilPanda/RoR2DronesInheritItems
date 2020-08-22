@@ -1,8 +1,8 @@
 # Drones Inherit Items
 ## By Basil
-A mod that allows **all** drones and turrets (NOW WITH SQUID TURRETS) to inherit items from the player.
+A mod that allows **all** drones and turrets to inherit items from the player.
 
-- **Has AURELIONITE, QUEEN GUARDS, GHOSTS, and lots of configuration!** 
+- **Has AURELIONITE, QUEEN GUARDS, GHOSTS, SQUID TURRETS, and lots of configuration!** 
 
 - Can update inventories after each stage clear!
 
@@ -55,6 +55,9 @@ A: It will randomly choose a value between 0 and the player's item count for the
 
 **v2.4.14**
 
+- Updated for v1.0 of the game!
+- Updated for 2.5.7 R2API.
+- Permanently blacklisted Visions of Heresy on Emergency Drones.
 - Fixed multiplayer latency issues. Thanks to @terribleperson#7284 for reporting it!
 
 **v2.4.13**

@@ -122,7 +122,8 @@ namespace Basil_ror2
         public static EquipmentIndex[] LunarEquipmentList = new EquipmentIndex[]
         {
             EquipmentIndex.Meteor,
-            EquipmentIndex.LunarPotion, // no idea what this is but it has lunar on it :D
+            EquipmentIndex.LunarPotion,
+            EquipmentIndex.Tonic,
             EquipmentIndex.BurnNearby,
             EquipmentIndex.CrippleWard
         };
@@ -141,7 +142,14 @@ namespace Basil_ror2
             ItemIndex.BeetleGland,
             ItemIndex.CrippleWardOnLevel,
             ItemIndex.TPHealingNova,
-            ItemIndex.FocusConvergence
+            ItemIndex.FocusConvergence,
+            ItemIndex.ScrapWhite,
+            ItemIndex.ScrapGreen,
+            ItemIndex.ScrapRed,
+            ItemIndex.ScrapYellow,
+            ItemIndex.RandomDamageZone,         //Mercurial Rachis
+            ItemIndex.MonstersOnShrineUse,      //Defiant Gouge
+            ItemIndex.LunarBadLuck              //Purity
         };
 
         public void InitConfig()

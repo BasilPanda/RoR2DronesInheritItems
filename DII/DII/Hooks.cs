@@ -118,7 +118,7 @@ namespace Basil_ror2
                     AIOwnership component2 = cm.gameObject.GetComponent<AIOwnership>();
                     CharacterMaster master = ownerBody.master;
                     DII.checkConfig(cm, master);
-                    // I'm dumb and didn't realize this was an item for the ghost effect for over 5 months...
+                    
                     DII.customItem(cm, DII.CBItemGhosts.Value);
                     DII.customItemCap(cm, DII.CBItemCapGhosts.Value);
                     DII.customEquip(cm, DII.CBEquipGhosts.Value);
@@ -309,7 +309,7 @@ namespace Basil_ror2
                     if (masterPrefabNamesSummonReturn[self.masterPrefab.name])
                     {
                         DII.checkConfig(characterMaster, master);
-                        if(self.masterPrefab.name == "Drone2Master")
+                        if(self.masterPrefab.name == "Drone2Master" || self.masterPrefab.name == "Emer")
                         {
                             characterMaster.inventory.ResetItem(ItemIndex.LunarPrimaryReplacement);
                         }
