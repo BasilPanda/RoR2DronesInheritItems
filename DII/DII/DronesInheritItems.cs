@@ -8,7 +8,7 @@ using System;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.14")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.4.15")]
     public class DII : BaseUnityPlugin
     {
         #region General Config Wrappers
@@ -36,6 +36,7 @@ namespace Basil_ror2
         public static ConfigEntry<bool> Tier1Items;
         public static ConfigEntry<bool> Tier2Items;
         public static ConfigEntry<bool> Tier3Items;
+        public static ConfigEntry<bool> BossItems;
         public static ConfigEntry<bool> LunarItems;
         public static ConfigEntry<bool> EquipItems;
 
@@ -150,6 +151,17 @@ namespace Basil_ror2
             ItemIndex.RandomDamageZone,         //Mercurial Rachis
             ItemIndex.MonstersOnShrineUse,      //Defiant Gouge
             ItemIndex.LunarBadLuck              //Purity
+        };
+
+        public static ItemIndex[] BossItemList = new ItemIndex[]
+        {
+            ItemIndex.NovaOnLowHealth,
+            ItemIndex.ShinyPearl,
+            ItemIndex.SprintWisp,
+            ItemIndex.Knurl,
+            ItemIndex.FireballsOnHit,
+            ItemIndex.BleedOnHitAndExplode,
+            ItemIndex.SiphonOnLowHealth
         };
 
         public void InitConfig()
@@ -342,6 +354,13 @@ namespace Basil_ror2
                 "Tier3Items",
                 true,
                 "Toggles Tier 3 (red) items to be inherited/generated."
+                );
+
+            BossItems = Config.Bind(
+                "General Settings",
+                "BossItems",
+                true,
+                "Toggles Boss (yellow) items to be inherited/generated."
                 );
 
             LunarItems = Config.Bind(
@@ -752,7 +771,7 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.4.14 Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.4.15 Loaded!");
         }
 
         public static void checkConfig(CharacterMaster cm, CharacterMaster master)
@@ -891,6 +910,13 @@ namespace Basil_ror2
                     inventory.ResetItem(index);
                 }
             }
+            if(!BossItems.Value)
+            {
+                foreach (ItemIndex index in BossItemList)
+                {
+                    inventory.ResetItem(index);
+                }
+            }
             if (!LunarItems.Value)
             {
                 foreach (ItemIndex index in ItemCatalog.lunarItemList)
@@ -914,36 +940,35 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.tier1ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        giveResetItem(count, inventory, index, itemMultiplier);
                     }
                 }
                 if (Tier2Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier2ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        giveResetItem(count, inventory, index, itemMultiplier);
                     }
                 }
                 if (Tier3Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier3ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        giveResetItem(count, inventory, index, itemMultiplier);
+                    }
+                }
+                if (BossItems.Value)
+                {
+                    foreach( ItemIndex index in BossItemList)
+                    {
+                        giveResetItem(count, inventory, index, itemMultiplier);
                     }
                 }
                 if (LunarItems.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.lunarItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
+                        giveResetItem(count, inventory, index, itemMultiplier);
                     }
                 }
             }
@@ -955,36 +980,35 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.tier1ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        giveResetItem(count, inventory, index);
                     }
                 }
                 if (Tier2Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier2ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        giveResetItem(count, inventory, index);
                     }
                 }
                 if (Tier3Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier3ItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        giveResetItem(count, inventory, index);
+                    }
+                }
+                if (BossItems.Value)
+                {
+                    foreach (ItemIndex index in BossItemList)
+                    {
+                        giveResetItem(count, inventory, index);
                     }
                 }
                 if (LunarItems.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.lunarItemList)
                     {
-                        count = inventory.GetItemCount(index);
-                        inventory.ResetItem(index);
-                        inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+                        giveResetItem(count, inventory, index);
                     }
                 }
             }
@@ -1013,138 +1037,23 @@ namespace Basil_ror2
                 cm.inventory.ResetItem(item);
             }
 
-            customBlacklistChecker(cm);
+            CustomBlacklist.customBlacklistChecker(cm);
         }
 
-        public static void customBlacklistChecker(CharacterMaster cm)
+        // For regular inherit
+        public static void giveResetItem(int count, Inventory inventory, ItemIndex index, float itemMultiplier)
         {
-            if(CustomBlacklistEffectAll.Value)
-            {
-                customItem(cm);
-                customEquip(cm);
-                customItemCap(cm);
-            } else
-            {
-                //Debug.Log(cm.name);
-                Blacklist blacklist = new Blacklist();
-                foreach (BlacklistProperties blp in blacklist.getList())
-                {
-                    if(cm.name == blp.id)
-                    {
-                        if(blp.EquipBlacklist != "")
-                        {
-                            customEquip(cm, blp.EquipBlacklist);
-                        }
-                        customItem(cm, blp.ItemBlacklist);
-                        customItem(cm, blp.ItemCaps);
-                    }
-                }
-            }
+            count = inventory.GetItemCount(index);
+            inventory.ResetItem(index);
+            inventory.GiveItem(index, (int)Math.Ceiling(count * itemMultiplier));
         }
 
-        public static void customEquip(CharacterMaster cm, string customEquipList)
+        // For item randomizer
+        public static void giveResetItem(int count, Inventory inventory, ItemIndex index)
         {
-            // Custom Equip Blacklist
-            string[] customEquiplist = customEquipList.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string equip in customEquiplist)
-            {
-                if (Int32.TryParse(equip, out int x))
-                {
-                    if (cm.inventory.GetEquipmentIndex() == (EquipmentIndex)x)
-                    {
-                        cm.inventory.SetEquipmentIndex(EquipmentIndex.None);
-                    }
-                }
-            }
+            count = inventory.GetItemCount(index);
+            inventory.ResetItem(index);
+            inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
         }
-
-        public static void customEquip(CharacterMaster cm)
-        {
-            // Custom Equip Blacklist
-            string[] customEquiplist = CustomEquipBlacklistAll.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string equip in customEquiplist)
-            {
-                if (Int32.TryParse(equip, out int x))
-                {
-                    if (cm.inventory.GetEquipmentIndex() == (EquipmentIndex)x)
-                    {
-                        cm.inventory.SetEquipmentIndex(EquipmentIndex.None);
-                    }
-                }
-            }
-        }
-
-        public static void customItem(CharacterMaster cm, string customItemList)
-        {
-            // Custom Items Blacklist
-            string[] customItemlist = customItemList.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string item in customItemlist)
-            {
-                if (Int32.TryParse(item, out int x))
-                {
-                    cm.inventory.ResetItem((ItemIndex)x);
-                }
-            }
-        }
-
-        public static void customItem(CharacterMaster cm)
-        {
-            // Custom Items Blacklist
-            string[] customItemlist = CustomItemBlacklistAll.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string item in customItemlist)
-            {
-                if (Int32.TryParse(item, out int x))
-                {
-                    cm.inventory.ResetItem((ItemIndex)x);
-                }
-            }
-        }
-
-        public static void customItemCap(CharacterMaster cm, string customCaps)
-        {
-            // Custom item caps
-            string[] customItemCaps = customCaps.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string item in customItemCaps)
-            {
-                string[] temp = item.Split(new[] { '-' });
-                if (temp.Length == 2)
-                {
-                    if (Int32.TryParse(temp[0], out int itemId) && Int32.TryParse(temp[1], out int cap))
-                    {
-                        if (cm.inventory.GetItemCount((ItemIndex)itemId) > cap)
-                        {
-                            cm.inventory.ResetItem((ItemIndex)itemId);
-                            cm.inventory.GiveItem((ItemIndex)itemId, cap);
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void customItemCap(CharacterMaster cm)
-        {
-            // Custom item caps
-            string [] customItemCaps = CustomItemCapsAll.Value.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach(string item in customItemCaps)
-            {
-                string[] temp = item.Split(new[] { '-' });
-                if(temp.Length == 2)
-                {
-                    if (Int32.TryParse(temp[0], out int itemId) && Int32.TryParse(temp[1], out int cap))
-                    {
-                        if(cm.inventory.GetItemCount((ItemIndex)itemId) > cap)
-                        {
-                            cm.inventory.ResetItem((ItemIndex)itemId);
-                            cm.inventory.GiveItem((ItemIndex)itemId, cap);
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }

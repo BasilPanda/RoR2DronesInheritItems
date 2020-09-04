@@ -8,6 +8,7 @@ using RoR2.CharacterAI;
 using UnityEngine.Networking;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using UnityEngine.SceneManagement;
 
 namespace Basil_ror2
 {
@@ -86,7 +87,11 @@ namespace Basil_ror2
                     {
                         if (bodyprefabNames.Contains(cm.bodyPrefab.name))
                         {
-                            if(cm.bodyPrefab.name == "SquidTurretBody")
+                            if (cm.bodyPrefab.name == "SquidTurretBody")
+                            {
+                                continue;
+                            }
+                            if(cm.bodyPrefab.name == "MegaDroneBody" && SceneManager.GetActiveScene().name == "moon")
                             {
                                 continue;
                             }
@@ -94,6 +99,10 @@ namespace Basil_ror2
                             {
                                 CharacterMaster owner = cm.gameObject.GetComponent<AIOwnership>().ownerMaster;
                                 DII.updateInventory(cm, owner);
+                                if(cm.bodyPrefab.name == "EquipmentDroneBody")
+                                {
+                                    cm.inventory.GiveItem((ItemIndex)121, 15);
+                                }
                             }
                         }
                     }
@@ -119,9 +128,9 @@ namespace Basil_ror2
                     CharacterMaster master = ownerBody.master;
                     DII.checkConfig(cm, master);
                     
-                    DII.customItem(cm, DII.CBItemGhosts.Value);
-                    DII.customItemCap(cm, DII.CBItemCapGhosts.Value);
-                    DII.customEquip(cm, DII.CBEquipGhosts.Value);
+                    CustomBlacklist.customItem(cm, DII.CBItemGhosts.Value);
+                    CustomBlacklist.customItemCap(cm, DII.CBItemCapGhosts.Value);
+                    CustomBlacklist.customEquip(cm, DII.CBEquipGhosts.Value);
                     cm.inventory.GiveItem(ItemIndex.Ghost, 1);
                     cm.inventory.ResetItem(ItemIndex.HealthDecay);
                     cm.inventory.GiveItem(ItemIndex.HealthDecay, duration);
