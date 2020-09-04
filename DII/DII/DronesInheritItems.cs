@@ -25,10 +25,12 @@ namespace Basil_ror2
         public static ConfigEntry<string> Tier1GenCap;
         public static ConfigEntry<string> Tier2GenCap;
         public static ConfigEntry<string> Tier3GenCap;
+        public static ConfigEntry<string> BossGenCap;
         public static ConfigEntry<string> LunarGenCap;
         public static ConfigEntry<string> Tier1GenChance;
         public static ConfigEntry<string> Tier2GenChance;
         public static ConfigEntry<string> Tier3GenChance;
+        public static ConfigEntry<string> BossGenChance;
         public static ConfigEntry<string> LunarGenChance;
         public static ConfigEntry<string> EquipGenChance;
         public static ConfigEntry<bool> LunarEquips;
@@ -290,6 +292,13 @@ namespace Basil_ror2
                 "The multiplicative max item cap for generating Tier 3 (red) items."
                 );
 
+            BossGenCap = Config.Bind(
+                "Generator Settings",
+                "BossGenCap",
+                "1",
+                "The multiplicative max item cap for generating Boss (yellow) items."
+                );
+
             LunarGenCap = Config.Bind(
                 "Generator Settings",
                 "LunarGenCap",
@@ -316,6 +325,13 @@ namespace Basil_ror2
                 "Tier3GenChance",
                 "1",
                 "The percent chance for generating a Tier 3 (red) item."
+                );
+
+            BossGenChance = Config.Bind(
+                "Generator Settings",
+                "BossGenChance",
+                "10",
+                "The percent chance for generating a Boss (yellow) item."
                 );
 
             LunarGenChance = Config.Bind(
@@ -785,30 +801,28 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.tier1ItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(Tier1GenChance.Value), master))
-                        {
-                            inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier1GenCap.Value) + 1)));
-                        }
+                        generateRollItem(inventory, master, scc, index, ConfigToFloat(Tier1GenChance.Value), ConfigToFloat(Tier1GenCap.Value));
                     }
                 }
                 if (Tier2Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier2ItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(Tier2GenChance.Value), master))
-                        {
-                            inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier2GenCap.Value) + 1)));
-                        }
+                        generateRollItem(inventory, master, scc, index, ConfigToFloat(Tier2GenChance.Value), ConfigToFloat(Tier2GenCap.Value));
                     }
                 }
                 if (Tier3Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier3ItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(Tier3GenChance.Value), master))
-                        {
-                            inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(Tier3GenCap.Value) + 1)));
-                        }
+                        generateRollItem(inventory, master, scc, index, ConfigToFloat(Tier3GenChance.Value), ConfigToFloat(Tier3GenCap.Value));
+                    }
+                }
+                if (BossItems.Value)
+                {
+                    foreach (ItemIndex index in ItemCatalog.tier3ItemList)
+                    {
+                        generateRollItem(inventory, master, scc, index, ConfigToFloat(BossGenChance.Value), ConfigToFloat(BossGenCap.Value));
                     }
                 }
                 if (LunarItems.Value)
@@ -1054,6 +1068,15 @@ namespace Basil_ror2
             count = inventory.GetItemCount(index);
             inventory.ResetItem(index);
             inventory.GiveItem(index, UnityEngine.Random.Range(0, count + 1));
+        }
+
+        // For item generation
+        public static void generateRollItem(Inventory inventory, CharacterMaster master, int scc, ItemIndex index, float GenChance, float GenCap)
+        {
+            if (Util.CheckRoll(GenChance, master))
+            {
+                inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * GenCap + 1)));
+            }
         }
     }
 }
