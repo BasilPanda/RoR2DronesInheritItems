@@ -144,64 +144,50 @@ namespace Basil_ror2
         {
             if (DII.QueenGuardInherit.Value)
             {
-                On.RoR2.CharacterBody.UpdateBeetleGuardAllies += (orig, self) =>
+                IL.RoR2.CharacterBody.UpdateBeetleGuardAllies += il =>
                 {
-                    if (NetworkServer.active)
-                    {
-                        int num = self.inventory ? self.inventory.GetItemCount(ItemIndex.BeetleGland) : 0;
-                        if (num > 0 && self.master.GetDeployableCount(DeployableSlot.BeetleGuardAlly) < num)
-                        {
-                            self.SetFieldValue("guardResummonCooldown", self.GetFieldValue<float>("guardResummonCooldown") - Time.fixedDeltaTime);
-
-                            if (self.GetFieldValue<float>("guardResummonCooldown") <= 0f)
-                            {
-                                self.SetFieldValue("guardResummonCooldown", 30f);
-                                DirectorSpawnRequest directorSpawnRequest = new DirectorSpawnRequest((SpawnCard)Resources.Load("SpawnCards/CharacterSpawnCards/cscBeetleGuardAlly"), new DirectorPlacementRule
-                                {
-                                    placementMode = DirectorPlacementRule.PlacementMode.Approximate,
-                                    minDistance = 3f,
-                                    maxDistance = 40f,
-                                    spawnOnTarget = self.transform
-                                }, RoR2Application.rng);
-                                directorSpawnRequest.summonerBodyObject = self.gameObject;
-                                GameObject gameObject = DirectorCore.instance.TrySpawnObject(directorSpawnRequest);
-                                if (gameObject)
-                                {
-                                    CharacterMaster component = gameObject.GetComponent<CharacterMaster>();
-                                    Inventory inventory = gameObject.GetComponent<Inventory>();
-                                    
-                                    DII.checkConfig(component, self.master);
-
-                                    AIOwnership component2 = gameObject.GetComponent<AIOwnership>();
-                                    BaseAI component3 = gameObject.GetComponent<BaseAI>();
-                                    if (component)
-                                    {
-                                        component.teamIndex = TeamComponent.GetObjectTeam(self.gameObject);
-                                        component.inventory.GiveItem(ItemIndex.BoostDamage, 30);
-                                        component.inventory.GiveItem(ItemIndex.BoostHp, 10);
-                                        GameObject bodyObject = component.GetBodyObject();
-                                        if (bodyObject)
-                                        {
-                                            Deployable component4 = bodyObject.GetComponent<Deployable>();
-                                            self.master.AddDeployable(component4, DeployableSlot.BeetleGuardAlly);
-                                        }
-                                    }
-                                    if (component2)
-                                    {
-                                        component2.ownerMaster = self.master;
-                                    }
-                                    if (component3)
-                                    {
-                                        component3.leader.gameObject = self.gameObject;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    ILCursor c = new ILCursor(il);
+                    c.GotoNext(
+                        x => x.MatchLdloc(4),
+                        x => x.MatchCallOrCallvirt<CharacterMaster>("get_inventory"),
+                        x => x.MatchLdcI4(47),
+                        x => x.MatchLdcI4(10),
+                        x => x.MatchCallOrCallvirt<Inventory>("GiveItem"),
+                        x => x.MatchLdloc(4)
+                        );
+                    c.Index += 5;
+                    c.Emit(OpCodes.Ldarg_0);
+                    c.Emit(OpCodes.Call, typeof(CharacterBody).GetMethod("get_master"));
+                    c.Emit(OpCodes.Ldloc_3);
+                    c.EmitDelegate <Action<CharacterMaster, CharacterMaster>>((cm, master) =>
+                      {
+                          if (cm && master)
+                          {
+                              DII.checkConfig(cm, master);
+                          }
+                      });
+                    //Debug.Log(c.ToString());
                 };
             }
+                /*
+            if (DII.QueenGuardInherit.Value)
+            {
+                On.RoR2.DirectorCore.TrySpawnObject += (orig, self, directorSpawnRequest) =>
+                {
+                    GameObject gameObject = orig(self, directorSpawnRequest);
+                    CharacterMaster cm = gameObject.GetComponent<CharacterMaster>();
+                    if (gameObject && cm && cm.bodyPrefab.name == "BeetleGuardAllyBody")
+                    {
+                        if(cm.GetComponent<AIOwnership>().ownerMaster)
+                        {
+                            DII.checkConfig(cm, cm.GetComponent<AIOwnership>().ownerMaster);
+                        }
+                    }
+                    return gameObject;
+                };
+            }*/
         }
-
+            
         // Backup Drone inheritance 
         public static void backupDrones()
         {
@@ -209,19 +195,8 @@ namespace Basil_ror2
             {
                 On.RoR2.EquipmentSlot.SummonMaster += (orig, self, masterObjectPrefab, position, rotation) =>
                 {
-                    if (!NetworkServer.active)
-                    {
-                        Debug.LogWarning("[Server] function 'RoR2.CharacterMaster RoR2.EquipmentSlot::SummonMaster(UnityEngine.GameObject,UnityEngine.Vector3,UnityEngine.Quaternion)' called on client");
-                        return null;
-                    }
-                    CharacterMaster characterMaster = new MasterSummon
-                    {
-                        masterPrefab = masterObjectPrefab,
-                        position = position,
-                        rotation = rotation,
-                        summonerBodyObject = self.gameObject,
-                        ignoreTeamMemberLimit = false
-                    }.Perform();
+                    CharacterMaster characterMaster = orig(self, masterObjectPrefab, position, rotation);
+                    
                     if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster" && characterMaster != null)
                     {
                         DII.checkConfig(characterMaster, characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster);
@@ -292,22 +267,8 @@ namespace Basil_ror2
 
             On.RoR2.SummonMasterBehavior.OpenSummonReturnMaster += (orig, self, activator) =>
             {
-
-                if (!NetworkServer.active)
-                {
-                    Debug.LogWarning("[Server] function 'RoR2.CharacterMaster RoR2.SummonMasterBehavior::OpenSummonReturnMaster(RoR2.Interactor)' called on client");
-                    return null;
-                }
-                float d = 0f;
-                CharacterMaster characterMaster = new MasterSummon
-                {
-                    masterPrefab = self.masterPrefab,
-                    position = self.transform.position + Vector3.up * d,
-                    rotation = self.transform.rotation,
-                    summonerBodyObject = ((activator != null) ? activator.gameObject : null),
-                    ignoreTeamMemberLimit = true
-                }.Perform();
-
+                CharacterMaster characterMaster = orig(self, activator);
+                
                 Inventory inventory = characterMaster.inventory;
                 CharacterBody cm = activator.GetComponent<CharacterBody>();
                 CharacterMaster master = cm.master;
@@ -324,29 +285,6 @@ namespace Basil_ror2
                         }
                     }
                 }
-
-                if (characterMaster)
-                {
-                    GameObject bodyObject = characterMaster.GetBodyObject();
-                    if (bodyObject)
-                    {
-                        ModelLocator component = bodyObject.GetComponent<ModelLocator>();
-                        if (component && component.modelTransform)
-                        {
-                            TemporaryOverlay temporaryOverlay = component.modelTransform.gameObject.AddComponent<TemporaryOverlay>();
-                            temporaryOverlay.duration = 0.5f;
-                            temporaryOverlay.animateShaderAlpha = true;
-                            temporaryOverlay.alphaCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
-                            temporaryOverlay.destroyComponentOnEnd = true;
-                            temporaryOverlay.originalMaterial = Resources.Load<Material>("Materials/matSummonDrone");
-                            temporaryOverlay.AddToCharacerModel(component.modelTransform.GetComponent<CharacterModel>());
-                        }
-                    }
-                }
-                if (self.destroyAfterSummoning)
-                {
-                    UnityEngine.Object.Destroy(self.gameObject);
-                }
                 return characterMaster;
             };
         }
@@ -358,7 +296,7 @@ namespace Basil_ror2
             {
                 On.RoR2.CharacterMaster.RespawnExtraLife += (orig, self) =>
                 {
-                    self.inventory.GiveItem(ItemIndex.ExtraLifeConsumed, 1);
+                    orig(self);
 
                     if (self.bodyPrefab.name.ToString() == "BackupDroneBody")
                     {
@@ -369,23 +307,6 @@ namespace Basil_ror2
                     else
                     {
                         self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), false);
-                    }
-                    self.GetBody().AddTimedBuff(BuffIndex.Immune, 3f);
-                    GameObject gameObject = Resources.Load<GameObject>("Prefabs/Effects/HippoRezEffect");
-                    if (self.GetPropertyValue<GameObject>("bodyInstanceObject"))
-                    {
-                        foreach (EntityStateMachine entityStateMachine in self.GetPropertyValue<GameObject>("bodyInstanceObject").GetComponents<EntityStateMachine>())
-                        {
-                            entityStateMachine.initialStateType = entityStateMachine.mainStateType;
-                        }
-                        if (gameObject)
-                        {
-                            EffectManager.SpawnEffect(gameObject, new EffectData
-                            {
-                                origin = self.GetFieldValue<Vector3>("deathFootPosition"),
-                                rotation = self.GetPropertyValue<GameObject>("bodyInstanceObject").transform.rotation
-                            }, true);
-                        }
                     }
                 };
             }
