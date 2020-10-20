@@ -139,7 +139,7 @@ namespace Basil_ror2
             }
         }
 
-        // Queen Guard inheritance
+        // Queen Guard inheritance...using IL...
         public static void queensGuard()
         {
             if (DII.QueenGuardInherit.Value)

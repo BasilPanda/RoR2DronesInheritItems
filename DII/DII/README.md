@@ -8,6 +8,8 @@ A mod that allows **all** drones and turrets to inherit items from the player.
 
 - Can generate items for drones with the ItemGenerator option in the config file! *Will ignore inherit settings.*
 
+- Should now have more mod compatibilities! Let me know if something breaks and I'll try to look at it!
+
 By default, only drones and turrets inherit items.
 
 Please contact Basil#7379 on Discord for any issues besides the known bugs!
@@ -59,7 +61,8 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 
 **v2.5.1**
 
-- Some code redone for mod compatibility
+- Some code refactoring for mod compatibility
+- If there's any issues please let me know and I'll try to fix them when I can!
 
 **v2.4.15**
 
