@@ -158,12 +158,12 @@ namespace Basil_ror2
                     c.Index += 5;
                     c.Emit(OpCodes.Ldarg_0);
                     c.Emit(OpCodes.Call, typeof(CharacterBody).GetMethod("get_master"));
-                    c.Emit(OpCodes.Ldloc_3);
-                    c.EmitDelegate <Action<CharacterMaster, CharacterMaster>>((cm, master) =>
+                    c.Emit(OpCodes.Ldloc, 4);
+                    c.EmitDelegate <Action<CharacterMaster, CharacterMaster>>((player, beetle) =>
                       {
-                          if (cm && master)
+                          if (beetle && player)
                           {
-                              DII.checkConfig(cm, master);
+                              DII.checkConfig(beetle, player);
                           }
                       });
                     //Debug.Log(c.ToString());
