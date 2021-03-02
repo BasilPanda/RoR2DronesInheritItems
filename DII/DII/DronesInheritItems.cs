@@ -8,7 +8,7 @@ using System;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.5.1")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.6.0")]
     public class DII : BaseUnityPlugin
     {
         #region General Config Wrappers
@@ -484,21 +484,21 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CustomItemBlacklistAll",
                 "",
-                "Enter items ids separated by a comma and a space to blacklist inheritance/generation on certain items. ex) 41, 23, 17 \nItem ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
+                "Enter items ids or code names separated by a comma and a space to blacklist inheritance/generation on certain items. ex) 41, 23, 17 \nItem ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
                 );
 
             CustomEquipBlacklistAll = Config.Bind(
                 "Blacklist Settings",
                 "CustomEquipBlacklistAll",
                 "",
-                "Enter equipment ids separated by a comma and a space to blacklist inheritance/generation on certain equips. ex) 1, 14, 13 \nEquip ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
+                "Enter equipment ids or code names separated by a comma and a space to blacklist inheritance/generation on certain equips. ex) 1, 14, 13 \nEquip ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
                 );
 
             CustomItemCapsAll = Config.Bind(
                 "Blacklist Settings",
                 "CustomItemCapsAll",
                 "",
-                "Enter item ids as X-Y separated by a comma and a space to apply caps to certain items. X is the item id and Y is the number cap. ex) 0-20, 1-5, 2-1"
+                "Enter item ids or code names as X-Y separated by a comma and a space to apply caps to certain items. X is the item id and Y is the number cap. ex) 0-20, 1-5, 2-1"
                 );
 
             #endregion All Settings
@@ -787,7 +787,7 @@ namespace Basil_ror2
             Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.5.1 Loaded!");
+            Chat.AddMessage("DronesInheritItems v2.6.0 Loaded!");
         }
 
         public static void checkConfig(CharacterMaster cm, CharacterMaster master)

@@ -46,6 +46,14 @@ namespace Basil_ror2
                         cm.inventory.SetEquipmentIndex(EquipmentIndex.None);
                     }
                 }
+                else
+                {
+                    EquipmentIndex index = EquipmentCatalog.FindEquipmentIndex(equip);
+                    if (index != EquipmentIndex.None)
+                    {
+                        cm.inventory.SetEquipmentIndex(EquipmentIndex.None);
+                    }
+                }
             }
         }
 
@@ -59,6 +67,14 @@ namespace Basil_ror2
                 if (Int32.TryParse(equip, out int x))
                 {
                     if (cm.inventory.GetEquipmentIndex() == (EquipmentIndex)x)
+                    {
+                        cm.inventory.SetEquipmentIndex(EquipmentIndex.None);
+                    }
+                }
+                else
+                {
+                    EquipmentIndex index = EquipmentCatalog.FindEquipmentIndex(equip);
+                    if (index != EquipmentIndex.None)
                     {
                         cm.inventory.SetEquipmentIndex(EquipmentIndex.None);
                     }
@@ -77,6 +93,14 @@ namespace Basil_ror2
                 {
                     cm.inventory.ResetItem((ItemIndex)x);
                 }
+                else
+                {
+                    ItemIndex index = ItemCatalog.FindItemIndex(item);
+                    if (index != ItemIndex.None)
+                    {
+                        cm.inventory.ResetItem(index);
+                    }
+                }
             }
         }
 
@@ -90,6 +114,14 @@ namespace Basil_ror2
                 if (Int32.TryParse(item, out int x))
                 {
                     cm.inventory.ResetItem((ItemIndex)x);
+                }
+                else
+                {
+                    ItemIndex index = ItemCatalog.FindItemIndex(item);
+                    if (index != ItemIndex.None)
+                    {
+                        cm.inventory.ResetItem(index);
+                    }
                 }
             }
         }
@@ -111,6 +143,18 @@ namespace Basil_ror2
                             cm.inventory.GiveItem((ItemIndex)itemId, cap);
                         }
                     }
+                    else if(Int32.TryParse(temp[1], out cap))
+                    {
+                        ItemIndex index = ItemCatalog.FindItemIndex(temp[0]);
+                        if(index != ItemIndex.None)
+                        {
+                            if (cm.inventory.GetItemCount(index) > cap)
+                            {
+                                cm.inventory.ResetItem(index);
+                                cm.inventory.GiveItem(index, cap);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -130,6 +174,18 @@ namespace Basil_ror2
                         {
                             cm.inventory.ResetItem((ItemIndex)itemId);
                             cm.inventory.GiveItem((ItemIndex)itemId, cap);
+                        }
+                    }
+                    else if (Int32.TryParse(temp[1], out cap))
+                    {
+                        ItemIndex index = ItemCatalog.FindItemIndex(temp[0]);
+                        if (index != ItemIndex.None)
+                        {
+                            if (cm.inventory.GetItemCount(index) > cap)
+                            {
+                                cm.inventory.ResetItem(index);
+                                cm.inventory.GiveItem(index, cap);
+                            }
                         }
                     }
                 }
