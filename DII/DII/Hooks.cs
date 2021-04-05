@@ -33,14 +33,18 @@ namespace Basil_ror2
         // Master prefabs to check in Open Summon Return. Squid turrets do not get spawned in this method.
         public static Dictionary<string, bool> masterPrefabNamesSummonReturn = new Dictionary<string, bool>()
         {
-            { "Turret1Master", DII.MinigunTurretsInherit.Value },
-            { "Drone1Master", DII.GunnerDronesInherit.Value },
-            { "Drone2Master", DII.HealDronesInherit.Value },
-            { "DroneMissileMaster", DII.ProtoDronesInherit.Value},
-            { "MegaDroneMaster", DII.MissileDronesInherit.Value },
-            { "FlameDroneMaster", DII.FlameDronesInherit.Value },
-            { "EquipmentDroneMaster", DII.EquipDronesInherit.Value },
-            { "EmergencyDroneMaster", DII.EmergencyDronesInherit.Value },
+            { "Turret1Master(Clone)", DII.MinigunTurretsInherit.Value },
+            { "Drone1Master(Clone)", DII.GunnerDronesInherit.Value },
+            { "Drone2Master(Clone)", DII.HealDronesInherit.Value },
+            { "DroneMissileMaster(Clone)", DII.ProtoDronesInherit.Value},
+            { "MegaDroneMaster(Clone)", DII.MissileDronesInherit.Value },
+            { "FlameDroneMaster(Clone)", DII.FlameDronesInherit.Value },
+            { "EquipmentDroneMaster(Clone)", DII.EquipDronesInherit.Value },
+            { "EmergencyDroneMaster(Clone)", DII.EmergencyDronesInherit.Value },
+            { "SquidTurretMaster(Clone)", DII.SquidTurretsInherit.Value },
+            { "BeetleGuardAllyMaster(Clone)", DII.QueenGuardInherit.Value },
+            { "DroneBackupMaster(Clone)", DII.BackupDronesInherit.Value },
+            { "TitanGoldAllyMaster(Clone)", DII.GoldTitanInherit.Value },
         };
 
         // Config Values for updating stage
@@ -139,153 +143,27 @@ namespace Basil_ror2
             }
         }
 
-        // Queen Guard inheritance...using IL...
-        public static void queensGuard()
+        public static void masterInherit(MasterSummon.MasterSummonReport masterSummon)
         {
-            if (DII.QueenGuardInherit.Value)
-            {
-                IL.RoR2.CharacterBody.UpdateBeetleGuardAllies += il =>
-                {
-                    ILCursor c = new ILCursor(il);
-                    c.GotoNext(
-                        x => x.MatchLdloc(4),
-                        x => x.MatchCallOrCallvirt<CharacterMaster>("get_inventory"),
-                        x => x.MatchLdcI4(47),
-                        x => x.MatchLdcI4(10),
-                        x => x.MatchCallOrCallvirt<Inventory>("GiveItem"),
-                        x => x.MatchLdloc(4)
-                        );
-                    c.Index += 5;
-                    c.Emit(OpCodes.Ldarg_0);
-                    c.Emit(OpCodes.Call, typeof(CharacterBody).GetMethod("get_master"));
-                    c.Emit(OpCodes.Ldloc, 4);
-                    c.EmitDelegate <Action<CharacterMaster, CharacterMaster>>((player, beetle) =>
-                      {
-                          if (beetle && player)
-                          {
-                              DII.checkConfig(beetle, player);
-                          }
-                      });
-                    //Debug.Log(c.ToString());
-                };
-            }
-                /*
-            if (DII.QueenGuardInherit.Value)
-            {
-                On.RoR2.DirectorCore.TrySpawnObject += (orig, self, directorSpawnRequest) =>
-                {
-                    GameObject gameObject = orig(self, directorSpawnRequest);
-                    CharacterMaster cm = gameObject.GetComponent<CharacterMaster>();
-                    if (gameObject && cm && cm.bodyPrefab.name == "BeetleGuardAllyBody")
-                    {
-                        if(cm.GetComponent<AIOwnership>().ownerMaster)
-                        {
-                            DII.checkConfig(cm, cm.GetComponent<AIOwnership>().ownerMaster);
-                        }
-                    }
-                    return gameObject;
-                };
-            }*/
-        }
-            
-        // Backup Drone inheritance 
-        public static void backupDrones()
-        {
-            if (DII.BackupDronesInherit.Value)
-            {
-                On.RoR2.EquipmentSlot.SummonMaster += (orig, self, masterObjectPrefab, position, rotation) =>
-                {
-                    CharacterMaster characterMaster = orig(self, masterObjectPrefab, position, rotation);
-                    
-                    if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster" && characterMaster != null)
-                    {
-                        DII.checkConfig(characterMaster, characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster);
-                        characterMaster.inventory.ResetItem(RoR2Content.Items.AutoCastEquipment);
-                    }
-                    return characterMaster;
-                };
-            }
-            
-        }
-        
-        // Aurelionite
-        public static void titanGold()
-        {
-            On.RoR2.TeleporterInteraction.ChargingState.TrySpawnTitanGoldServer += (orig, self) =>
-            {
-
-                orig(self);
-                CharacterMaster titan = self.GetFieldValue<CharacterMaster>("titanGoldBossMaster");
-                CharacterMaster cm = null;
-                ReadOnlyCollection<TeamComponent> teamMembers = TeamComponent.GetTeamMembers(TeamIndex.Player);
-                for (int i = 0; i < teamMembers.Count; i++)
-                {
-                    if (Util.LookUpBodyNetworkUser(teamMembers[i].gameObject))
-                    {
-                        CharacterBody component = teamMembers[i].GetComponent<CharacterBody>();
-                        if (component && component.inventory)
-                        {
-                            cm = component.master;
-                        }
-                    }
-                }
-                if (DII.GoldTitanInherit.Value && cm != null && titan != null)
-                {
-                    DII.checkConfig(titan, cm);
-                }
-            };
-
-        }
-        
-        // Squid Turrets 
-        public static void squidInherit(SpawnCard.SpawnResult spawnResult)
-        {
-            CharacterMaster squidy = spawnResult.spawnedInstance ? spawnResult.spawnedInstance.GetComponent<CharacterMaster>() : null;
-            if (!squidy)
+            CharacterMaster npc = masterSummon.summonMasterInstance;
+            CharacterMaster player = masterSummon.leaderMasterInstance;
+            if(npc == null || player == null)
             {
                 return;
             }
-            //Debug.Log(squidy.name);
-            if (squidy.name == "SquidTurretMaster(Clone)")
+            if (npc.teamIndex != TeamIndex.Player)
             {
-                //CharacterMaster player = PlayerCharacterMasterController.instances[rand.Next(0, Run.instance.livingPlayerCount)].master;
-                CharacterMaster player = spawnResult.spawnRequest.summonerBodyObject.GetComponent<CharacterBody>().master;
-                DII.checkConfig(squidy, player);
-                {
-                    squidy.inventory.GiveItem(RoR2Content.Items.HealthDecay,(int)Math.Ceiling(DII.ConfigToFloat(DII.SquidHealthDecay.Value)));
-                }
+                return;
             }
-            
+            Debug.Log("Master Inherit: " + npc.name + " " + player.name);
+            // Now searches all through keys
+            masterKeyHandler(npc, player);
         }
 
         // Drones and Turrets
         public static void baseMod()
         {
-            if (DII.SquidTurretsInherit.Value)
-                SpawnCard.onSpawnedServerGlobal += squidInherit;
-
-            On.RoR2.SummonMasterBehavior.OpenSummonReturnMaster += (orig, self, activator) =>
-            {
-                CharacterMaster characterMaster = orig(self, activator);
-                
-                Inventory inventory = characterMaster.inventory;
-                CharacterBody cm = activator.GetComponent<CharacterBody>();
-                CharacterMaster master = cm.master;
-
-                // Now searches all through keys
-                if(masterPrefabNamesSummonReturn.Keys.Contains(self.masterPrefab.name))
-                {
-                    if (masterPrefabNamesSummonReturn[self.masterPrefab.name])
-                    {
-                        DII.checkConfig(characterMaster, master);
-                        if(self.masterPrefab.name == "Drone2Master" || self.masterPrefab.name == "Emer")
-                        {
-                            characterMaster.inventory.ResetItem(RoR2Content.Items.LunarPrimaryReplacement);
-                        }
-                    }
-                }
-                return characterMaster;
-            };
+            MasterSummon.onServerMasterSummonGlobal += masterInherit;
         }
 
         // Fixes Dio reinheritance
@@ -310,6 +188,28 @@ namespace Basil_ror2
                 };
             }
         }
+
+
+        // Check keys and add to inventory
+        public static void masterKeyHandler(CharacterMaster npc, CharacterMaster player)
+        {
+            if (masterPrefabNamesSummonReturn.Keys.Contains(npc.name))
+            {
+                if (masterPrefabNamesSummonReturn[npc.name])
+                {
+                    DII.checkConfig(npc, player);
+                    if (npc.name == "Drone2Master" || npc.name == "Emer")
+                    {
+                        npc.inventory.ResetItem(RoR2Content.Items.LunarPrimaryReplacement);
+                    }
+                    if (npc.name == "SquidTurretMaster(Clone)")
+                    {
+                        npc.inventory.GiveItem(RoR2Content.Items.HealthDecay, (int)Math.Ceiling(DII.ConfigToFloat(DII.SquidHealthDecay.Value)));
+                    }
+                }
+            }
+        }
+
         
     }
 }
