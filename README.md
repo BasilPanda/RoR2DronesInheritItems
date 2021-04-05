@@ -2,11 +2,13 @@
 ## By Basil
 A mod that allows **all** drones and turrets to inherit items from the player.
 
-- **Has AURELIONITE, QUEEN GUARDS, GHOSTS, SQUID TURRETS, and lots of configuration!** 
+- **Has Solus Probes, Aurelionite, Queen Guards, Ghosts, Squid Turrets, and lots of configuration!** 
 
 - Can update inventories after each stage clear!
 
 - Can generate items for drones with the ItemGenerator option in the config file! *Will ignore inherit settings.*
+
+- Should now have more mod compatibilities! Let me know if something breaks and I'll try to look at it!
 
 By default, only drones and turrets inherit items.
 
@@ -23,8 +25,6 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 1. To find the config file, first start up the game with DronesInheritItems.dll in your \BepInEx\plugins folder already!
 2. Then go to \BepInEx\config and open com.Basil.DronesInheritItems.cfg
 
-**I highly recommend deleting the config file if you previously installed this mod so it can be updated with the most recent config layout.**
-
 ## Ingame Examples
 
 [Ghosts](https://www.youtube.com/watch?v=8OT75rt7Bro)
@@ -37,7 +37,7 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 Q: Who does Aurelionite inherit items from?
 
-A: To whoever owns the item. If there are multiple people who own the item, then it selects randomly.
+A: To whoever owns the item. If there are multiple people who own the item, then it selects whoever had the most.
 
 Q: How do you calculate the item max cap for item generation?
 
@@ -47,11 +47,39 @@ Q: How does the ItemRandomizer setting work?
 
 A: It will randomly choose a value between 0 and the player's item count for the respective item if the setting is true.
 
+Q: When will you update/add features?
+
+A: Currently working a full time office job and modding is a hobby. I'll update when I have the time (usually weekends)!
+
 ## Known Bugs
 
 - None at the moment!
 
 ## Changelog
+
+**v3.0.0**
+
+- Updated for the 1 Year Anniversary Patch.
+- Solus Probes from Empathy Cores can now inherit items (default to false)
+- Code refactoring due to ItemIndex/EquipmentIndex changes
+
+**v2.6.0**
+
+- Custom blacklist configs now accept item code names! Super helpful for modded items. Thanks to @Moffein#8244 for reaching out and supplying the code!
+
+**v2.5.1**
+
+- Some code refactoring for mod compatibility
+- If there's any issues please let me know and I'll try to fix them when I can!
+
+**v2.4.15**
+
+- Updated for 2.5.14 R2API
+- Fixed softlocking issue w/ update items option and TC-280s.
+- Added back the 1.0 item cooldown to equipment drones.
+- Added boss item related config.
+- Code restructure
+- Shoutout to @breadguy5000 for the pings on the modding discord and everyone else who dm'd a bug report to me!
 
 **v2.4.14**
 
