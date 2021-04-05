@@ -1,8 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using System.Collections.Generic;
-using UnityEngine;
 using RoR2;
+using UnityEngine;
 using System;
 
 namespace Basil_ror2
@@ -68,6 +67,7 @@ namespace Basil_ror2
         public static ConfigEntry<bool> QueenGuardInherit;
         public static ConfigEntry<bool> GhostInherit;
         public static ConfigEntry<bool> GoldTitanInherit;
+        public static ConfigEntry<bool> SolusInherit;
 
         #endregion
 
@@ -120,6 +120,10 @@ namespace Basil_ror2
         public static ConfigEntry<string> CBItemGhosts;
         public static ConfigEntry<string> CBEquipGhosts;
         public static ConfigEntry<string> CBItemCapGhosts;
+
+        public static ConfigEntry<string> CBItemSolus;
+        public static ConfigEntry<string> CBEquipSolus;
+        public static ConfigEntry<string> CBItemCapSolus;
         #endregion 
 
         public static EquipmentDef[] LunarEquipmentList = new EquipmentDef[]
@@ -152,7 +156,8 @@ namespace Basil_ror2
             RoR2Content.Items.ScrapYellow,
             RoR2Content.Items.RandomDamageZone,         //Mercurial Rachis
             RoR2Content.Items.MonstersOnShrineUse,      //Defiant Gouge
-            RoR2Content.Items.LunarBadLuck              //Purity
+            RoR2Content.Items.LunarBadLuck,             //Purity
+            RoR2Content.Items.RoboBallBuddy,            //New Minions.
         };
 
         public static ItemDef[] BossItemList = new ItemDef[]
@@ -435,6 +440,13 @@ namespace Basil_ror2
                 "QueenGuardInherit",
                 false,
                 "Toggles Queen Guards to inherit/generate items."
+                );
+
+            SolusInherit = Config.Bind(
+                "General Settings",
+                "SolusProbesInherit",
+                false,
+                "Toggles Solus Probes to inherit/generate items."
                 );
             #endregion General Settings END
 
@@ -764,6 +776,30 @@ namespace Basil_ror2
 
             #endregion Ghosts
 
+            #region Solus Units
+
+            CBItemSolus = Config.Bind(
+                "Blacklist Settings",
+                "CBItemSolus",
+                "",
+                "Blacklist items targeting Solus Probes. Enter item ids the same way as CustomItemBlacklistAll."
+                );
+
+            CBEquipSolus = Config.Bind(
+                "Blacklist Settings",
+                "CBEquipSolus",
+                "",
+                "Blacklist equips targeting Solus Probes. Enter equip ids the same way as CustomEquipBlacklistAll."
+                );
+
+            CBItemCapSolus = Config.Bind(
+                "Blacklist Settings",
+                "CBItemCapSolus",
+                "",
+                "Cap items for Solus Probes. Enter ids the same way as CustomItemCapsAll."
+                );
+            #endregion
+
             #endregion Blacklist Settings END
 
         }
@@ -787,9 +823,9 @@ namespace Basil_ror2
             Chat.AddMessage("DronesInheritItems v3.0.0 Loaded!");
         }
 
-        public static void checkConfig(CharacterMaster cm, CharacterMaster master)
+        public static void checkConfig(CharacterMaster npc, CharacterMaster player)
         {
-            Inventory inventory = cm.inventory;
+            Inventory inventory = npc.inventory;
             if (ItemGenerator.Value) // Using generator instead
             {
                 resetInventory(inventory);
@@ -798,35 +834,35 @@ namespace Basil_ror2
                 {
                     foreach (ItemIndex index in ItemCatalog.tier1ItemList)
                     {
-                        generateRollItem(inventory, master, scc, index, ConfigToFloat(Tier1GenChance.Value), ConfigToFloat(Tier1GenCap.Value));
+                        generateRollItem(inventory, player, scc, index, ConfigToFloat(Tier1GenChance.Value), ConfigToFloat(Tier1GenCap.Value));
                     }
                 }
                 if (Tier2Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier2ItemList)
                     {
-                        generateRollItem(inventory, master, scc, index, ConfigToFloat(Tier2GenChance.Value), ConfigToFloat(Tier2GenCap.Value));
+                        generateRollItem(inventory, player, scc, index, ConfigToFloat(Tier2GenChance.Value), ConfigToFloat(Tier2GenCap.Value));
                     }
                 }
                 if (Tier3Items.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier3ItemList)
                     {
-                        generateRollItem(inventory, master, scc, index, ConfigToFloat(Tier3GenChance.Value), ConfigToFloat(Tier3GenCap.Value));
+                        generateRollItem(inventory, player, scc, index, ConfigToFloat(Tier3GenChance.Value), ConfigToFloat(Tier3GenCap.Value));
                     }
                 }
                 if (BossItems.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.tier3ItemList)
                     {
-                        generateRollItem(inventory, master, scc, index, ConfigToFloat(BossGenChance.Value), ConfigToFloat(BossGenCap.Value));
+                        generateRollItem(inventory, player, scc, index, ConfigToFloat(BossGenChance.Value), ConfigToFloat(BossGenCap.Value));
                     }
                 }
                 if (LunarItems.Value)
                 {
                     foreach (ItemIndex index in ItemCatalog.lunarItemList)
                     {
-                        if (Util.CheckRoll(ConfigToFloat(LunarGenChance.Value), master))
+                        if (Util.CheckRoll(ConfigToFloat(LunarGenChance.Value), player))
                         {
                             inventory.GiveItem(index, UnityEngine.Random.Range(0, (int)(scc * ConfigToFloat(LunarGenCap.Value) + 1)));
                         }
@@ -842,7 +878,7 @@ namespace Basil_ror2
                 }
                 if (EquipItems.Value)
                 {
-                    if (Util.CheckRoll(ConfigToFloat(EquipGenChance.Value), master))
+                    if (Util.CheckRoll(ConfigToFloat(EquipGenChance.Value), player))
                     {
                         inventory.ResetItem(RoR2Content.Items.AutoCastEquipment);
                         inventory.GiveItem(RoR2Content.Items.AutoCastEquipment, 1);
@@ -872,7 +908,7 @@ namespace Basil_ror2
             }
             else // Default inheritance
             {
-                updateInventory(cm, master);
+                updateInventory(npc, player);
             }
         }
 
@@ -896,10 +932,10 @@ namespace Basil_ror2
             }
         }
 
-        public static void updateInventory(CharacterMaster cm, CharacterMaster master)
+        public static void updateInventory(CharacterMaster child, CharacterMaster player)
         {
-            Inventory inventory = cm.inventory;
-            inventory.CopyItemsFrom(master.inventory);
+            Inventory inventory = child.inventory;
+            inventory.CopyItemsFrom(player.inventory);
             if (!Tier1Items.Value)
             {
                 foreach (ItemIndex index in ItemCatalog.tier1ItemList)
@@ -1028,14 +1064,14 @@ namespace Basil_ror2
             {
                 inventory.ResetItem(RoR2Content.Items.AutoCastEquipment);
                 inventory.GiveItem(RoR2Content.Items.AutoCastEquipment, 1);
-                inventory.CopyEquipmentFrom(master.inventory);
+                inventory.CopyEquipmentFrom(player.inventory);
                 if (!LunarEquips.Value)
                 {
                     for (int i = 0; i < LunarEquipmentList.Length; i++)
                     {
                         if (inventory.GetEquipmentIndex() == LunarEquipmentList[i].equipmentIndex)
                         {
-                            cm.inventory.SetEquipmentIndex(RoR2Content.Equipment.Fruit.equipmentIndex); // default to fruit
+                            child.inventory.SetEquipmentIndex(RoR2Content.Equipment.Fruit.equipmentIndex); // default to fruit
                             break;
                         }
                     }
@@ -1045,10 +1081,10 @@ namespace Basil_ror2
             // Items that will never be used by the NPCs.
             foreach (ItemDef item in ItemsNeverUsed)
             {
-                cm.inventory.ResetItem(item);
+                child.inventory.ResetItem(item);
             }
 
-            CustomBlacklist.customBlacklistChecker(cm);
+            CustomBlacklist.customBlacklistChecker(child);
         }
 
         // For regular inherit

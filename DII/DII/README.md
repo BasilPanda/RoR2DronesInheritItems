@@ -2,7 +2,7 @@
 ## By Basil
 A mod that allows **all** drones and turrets to inherit items from the player.
 
-- **Has AURELIONITE, QUEEN GUARDS, GHOSTS, SQUID TURRETS, and lots of configuration!** 
+- **Has Solus Probes, Aurelionite, Queen Guards, Ghosts, Squid Turrets, and lots of configuration!** 
 
 - Can update inventories after each stage clear!
 
@@ -25,8 +25,6 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 1. To find the config file, first start up the game with DronesInheritItems.dll in your \BepInEx\plugins folder already!
 2. Then go to \BepInEx\config and open com.Basil.DronesInheritItems.cfg
 
-**I highly recommend deleting the config file if you previously installed this mod so it can be updated with the most recent config layout.**
-
 ## Ingame Examples
 
 [Ghosts](https://www.youtube.com/watch?v=8OT75rt7Bro)
@@ -39,7 +37,7 @@ Please contact Basil#7379 on Discord for any issues besides the known bugs!
 
 Q: Who does Aurelionite inherit items from?
 
-A: To whoever owns the item. If there are multiple people who own the item, then it selects randomly.
+A: To whoever owns the item. If there are multiple people who own the item, then it selects whoever had the most.
 
 Q: How do you calculate the item max cap for item generation?
 
@@ -58,6 +56,16 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 - None at the moment!
 
 ## Changelog
+
+**v3.0.0**
+
+- Updated for the 1 Year Anniversary Patch.
+- Solus Probes from Empathy Cores can now inherit items (default to false)
+- Code refactoring due to ItemIndex/EquipmentIndex changes
+
+**v2.6.0**
+
+- Custom blacklist configs now accept item code names! Super helpful for modded items. Thanks to @Moffein#8244 for reaching out and supplying the code!
 
 **v2.5.1**
 

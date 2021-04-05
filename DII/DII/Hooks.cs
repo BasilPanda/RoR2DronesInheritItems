@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using RoR2;
-using UnityEngine;
 using RoR2.CharacterAI;
-using UnityEngine.Networking;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.ObjectModel;
 
 namespace Basil_ror2
 {
     public static class Hooks
     {
-        private static System.Random rand = new System.Random();
-
         // Bodyprefabs to check
         public static String[] bodyprefabNames = new String[]
         {
@@ -45,6 +40,8 @@ namespace Basil_ror2
             { "BeetleGuardAllyMaster(Clone)", DII.QueenGuardInherit.Value },
             { "DroneBackupMaster(Clone)", DII.BackupDronesInherit.Value },
             { "TitanGoldAllyMaster(Clone)", DII.GoldTitanInherit.Value },
+            { "RoboBallRedBuddyMaster(Clone)",  DII.SolusInherit.Value},
+            { "RoboBallGreenBuddyMaster(Clone)",  DII.SolusInherit.Value},
         };
 
         // Config Values for updating stage
@@ -143,11 +140,12 @@ namespace Basil_ror2
             }
         }
 
+        // Everything but Ghost hook
         public static void masterInherit(MasterSummon.MasterSummonReport masterSummon)
         {
             CharacterMaster npc = masterSummon.summonMasterInstance;
             CharacterMaster player = masterSummon.leaderMasterInstance;
-            if(npc == null || player == null)
+            if(npc == null)
             {
                 return;
             }
@@ -155,12 +153,40 @@ namespace Basil_ror2
             {
                 return;
             }
-            Debug.Log("Master Inherit: " + npc.name + " " + player.name);
-            // Now searches all through keys
+            // Debug.Log("Master Inherit: " + npc.name);
+
+            // Titan handler.
+            if (player == null)
+            {
+                if (npc.name == "TitanGoldAllyMaster(Clone)")
+                {
+                    ReadOnlyCollection<TeamComponent> teamMembers = TeamComponent.GetTeamMembers(TeamIndex.Player);
+                    int highestSeedCount = 0;
+                    int playerIndex = 0;
+                    for (int i = 0; i < teamMembers.Count; i++)
+                    {
+                        if (Util.LookUpBodyNetworkUser(teamMembers[i].gameObject))
+                        {
+                            CharacterBody component = teamMembers[i].GetComponent<CharacterBody>();
+                            int count = component.inventory.GetItemCount(RoR2Content.Items.TitanGoldDuringTP);
+                            if (highestSeedCount < count)
+                            {
+                                highestSeedCount = count;
+                                playerIndex = i;
+                            }
+                        }
+                    }
+                    player = teamMembers[playerIndex].GetComponent<CharacterBody>().master;
+                }
+                else
+                {
+                    return;
+                }
+            }
             masterKeyHandler(npc, player);
         }
 
-        // Drones and Turrets
+        // Event attaching
         public static void baseMod()
         {
             MasterSummon.onServerMasterSummonGlobal += masterInherit;
@@ -182,7 +208,6 @@ namespace Basil_ror2
                 };
             }
         }
-
 
         // Check keys and add to inventory
         public static void masterKeyHandler(CharacterMaster npc, CharacterMaster player)
