@@ -7,7 +7,7 @@ using System;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "2.6.0")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "3.0.0")]
     public class DII : BaseUnityPlugin
     {
         #region General Config Wrappers

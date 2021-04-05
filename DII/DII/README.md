@@ -59,7 +59,7 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 
 **v3.0.0**
 
-- Updated for the 1 Year Anniversary Patch.
+- Updated for the 1 Year Anniversary update.
 - Solus Probes from Empathy Cores can now inherit items (default to false)
 - Code refactoring due to ItemIndex/EquipmentIndex changes
 

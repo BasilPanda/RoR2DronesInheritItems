@@ -19,7 +19,9 @@ namespace Basil_ror2
             new BlacklistProperties("EquipmentDroneMaster", DII.CBItemEquipDrone.Value, DII.CBItemCapEquipDrone.Value),
             new BlacklistProperties("EmergencyDroneMaster", DII.CBItemEmergencyDrone.Value, DII.CBItemCapEmergencyDrone.Value),
             new BlacklistProperties("BeetleGuardAllyMaster(Clone)", DII.CBItemQueensGuard.Value, DII.CBEquipQueensGuard.Value, DII.CBItemCapQueensGuard.Value),
-            new BlacklistProperties("titanGoldBossMaster", DII.CBItemTitan.Value, DII.CBEquipTitan.Value, DII.CBItemCapTitan.Value),
+            new BlacklistProperties("TitanGoldAllyMaster(Clone)", DII.CBItemTitan.Value, DII.CBEquipTitan.Value, DII.CBItemCapTitan.Value),
+            new BlacklistProperties("RoboBallRedBuddyMaster(Clone)", DII.CBItemSolus.Value, DII.CBEquipSolus.Value, DII.CBItemCapSolus.Value),
+            new BlacklistProperties("RoboBallGreenBuddyMaster(Clone)", DII.CBItemSolus.Value, DII.CBEquipSolus.Value, DII.CBItemCapSolus.Value),
         };
 
         public List<BlacklistProperties> getList()
