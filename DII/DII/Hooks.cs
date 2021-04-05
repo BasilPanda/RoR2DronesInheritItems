@@ -131,9 +131,9 @@ namespace Basil_ror2
                     CustomBlacklist.customItem(cm, DII.CBItemGhosts.Value);
                     CustomBlacklist.customItemCap(cm, DII.CBItemCapGhosts.Value);
                     CustomBlacklist.customEquip(cm, DII.CBEquipGhosts.Value);
-                    cm.inventory.GiveItem(RoR2Content.Items.Ghost.itemIndex, 1);
-                    cm.inventory.ResetItem(RoR2Content.Items.HealthDecay.itemIndex);
-                    cm.inventory.GiveItem(RoR2Content.Items.HealthDecay.itemIndex, duration);
+                    cm.inventory.GiveItem(RoR2Content.Items.Ghost, 1);
+                    cm.inventory.ResetItem(RoR2Content.Items.HealthDecay);
+                    cm.inventory.GiveItem(RoR2Content.Items.HealthDecay, duration);
                     return characterBody;
                 };
             }
@@ -200,7 +200,7 @@ namespace Basil_ror2
                     if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster" && characterMaster != null)
                     {
                         DII.checkConfig(characterMaster, characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster);
-                        characterMaster.inventory.ResetItem(RoR2Content.Items.AutoCastEquipment.itemIndex);
+                        characterMaster.inventory.ResetItem(RoR2Content.Items.AutoCastEquipment);
                     }
                     return characterMaster;
                 };
@@ -252,7 +252,7 @@ namespace Basil_ror2
                 CharacterMaster player = spawnResult.spawnRequest.summonerBodyObject.GetComponent<CharacterBody>().master;
                 DII.checkConfig(squidy, player);
                 {
-                    squidy.inventory.GiveItem(RoR2Content.Items.HealthDecay.itemIndex,(int)Math.Ceiling(DII.ConfigToFloat(DII.SquidHealthDecay.Value)));
+                    squidy.inventory.GiveItem(RoR2Content.Items.HealthDecay,(int)Math.Ceiling(DII.ConfigToFloat(DII.SquidHealthDecay.Value)));
                 }
             }
             
@@ -280,7 +280,7 @@ namespace Basil_ror2
                         DII.checkConfig(characterMaster, master);
                         if(self.masterPrefab.name == "Drone2Master" || self.masterPrefab.name == "Emer")
                         {
-                            characterMaster.inventory.ResetItem(RoR2Content.Items.LunarPrimaryReplacement.itemIndex);
+                            characterMaster.inventory.ResetItem(RoR2Content.Items.LunarPrimaryReplacement);
                         }
                     }
                 }

@@ -122,48 +122,48 @@ namespace Basil_ror2
         public static ConfigEntry<string> CBItemCapGhosts;
         #endregion 
 
-        public static EquipmentIndex[] LunarEquipmentList = new EquipmentIndex[]
+        public static EquipmentDef[] LunarEquipmentList = new EquipmentDef[]
         {
-            RoR2Content.Equipment.Meteor.equipmentIndex,
-            RoR2Content.Equipment.LunarPotion.equipmentIndex,
-            RoR2Content.Equipment.Tonic.equipmentIndex,
-            RoR2Content.Equipment.BurnNearby.equipmentIndex,
-            RoR2Content.Equipment.CrippleWard.equipmentIndex
+            RoR2Content.Equipment.Meteor,
+            RoR2Content.Equipment.LunarPotion,
+            RoR2Content.Equipment.Tonic,
+            RoR2Content.Equipment.BurnNearby,
+            RoR2Content.Equipment.CrippleWard
         };
 
-        public static ItemIndex[] ItemsNeverUsed = new ItemIndex[]
+        public static ItemDef[] ItemsNeverUsed = new ItemDef[]
         {
-            RoR2Content.Items.SprintWisp.itemIndex,
-            RoR2Content.Items.TitanGoldDuringTP.itemIndex,
-            RoR2Content.Items.TreasureCache.itemIndex,
-            RoR2Content.Items.Feather.itemIndex,
-            RoR2Content.Items.Firework.itemIndex,
-            RoR2Content.Items.SprintArmor.itemIndex,
-            RoR2Content.Items.JumpBoost.itemIndex,
-            RoR2Content.Items.GoldOnHit.itemIndex,
-            RoR2Content.Items.WardOnLevel.itemIndex,
-            RoR2Content.Items.BeetleGland.itemIndex,
-            RoR2Content.Items.CrippleWardOnLevel.itemIndex,
-            RoR2Content.Items.TPHealingNova.itemIndex,
-            RoR2Content.Items.FocusConvergence.itemIndex,
-            RoR2Content.Items.ScrapWhite.itemIndex,
-            RoR2Content.Items.ScrapGreen.itemIndex,
-            RoR2Content.Items.ScrapRed.itemIndex,
-            RoR2Content.Items.ScrapYellow.itemIndex,
-            RoR2Content.Items.RandomDamageZone.itemIndex,         //Mercurial Rachis
-            RoR2Content.Items.MonstersOnShrineUse.itemIndex,      //Defiant Gouge
-            RoR2Content.Items.LunarBadLuck.itemIndex              //Purity
+            RoR2Content.Items.SprintWisp,
+            RoR2Content.Items.TitanGoldDuringTP,
+            RoR2Content.Items.TreasureCache,
+            RoR2Content.Items.Feather,
+            RoR2Content.Items.Firework,
+            RoR2Content.Items.SprintArmor,
+            RoR2Content.Items.JumpBoost,
+            RoR2Content.Items.GoldOnHit,
+            RoR2Content.Items.WardOnLevel,
+            RoR2Content.Items.BeetleGland,
+            RoR2Content.Items.CrippleWardOnLevel,
+            RoR2Content.Items.TPHealingNova,
+            RoR2Content.Items.FocusConvergence,
+            RoR2Content.Items.ScrapWhite,
+            RoR2Content.Items.ScrapGreen,
+            RoR2Content.Items.ScrapRed,
+            RoR2Content.Items.ScrapYellow,
+            RoR2Content.Items.RandomDamageZone,         //Mercurial Rachis
+            RoR2Content.Items.MonstersOnShrineUse,      //Defiant Gouge
+            RoR2Content.Items.LunarBadLuck              //Purity
         };
 
-        public static ItemIndex[] BossItemList = new ItemIndex[]
+        public static ItemDef[] BossItemList = new ItemDef[]
         {
-            RoR2Content.Items.NovaOnLowHealth.itemIndex,
-            RoR2Content.Items.ShinyPearl.itemIndex,
-            RoR2Content.Items.SprintWisp.itemIndex,
-            RoR2Content.Items.Knurl.itemIndex,
-            RoR2Content.Items.FireballsOnHit.itemIndex,
-            RoR2Content.Items.BleedOnHitAndExplode.itemIndex,
-            RoR2Content.Items.SiphonOnLowHealth.itemIndex
+            RoR2Content.Items.NovaOnLowHealth,
+            RoR2Content.Items.ShinyPearl,
+            RoR2Content.Items.SprintWisp,
+            RoR2Content.Items.Knurl,
+            RoR2Content.Items.FireballsOnHit,
+            RoR2Content.Items.BleedOnHitAndExplode,
+            RoR2Content.Items.SiphonOnLowHealth
         };
 
         public void InitConfig()
@@ -837,25 +837,25 @@ namespace Basil_ror2
                 }
                 if (!InheritDio.Value)
                 {
-                    inventory.ResetItem(RoR2Content.Items.ExtraLife.itemIndex);
+                    inventory.ResetItem(RoR2Content.Items.ExtraLife);
                 }
                 if (!InheritHappiestMask.Value)
                 {
-                    inventory.ResetItem(RoR2Content.Items.GhostOnKill.itemIndex);
+                    inventory.ResetItem(RoR2Content.Items.GhostOnKill);
                 }
                 if (EquipItems.Value)
                 {
                     if (Util.CheckRoll(ConfigToFloat(EquipGenChance.Value), master))
                     {
-                        inventory.ResetItem(RoR2Content.Items.AutoCastEquipment.itemIndex);
-                        inventory.GiveItem(RoR2Content.Items.AutoCastEquipment.itemIndex, 1);
+                        inventory.ResetItem(RoR2Content.Items.AutoCastEquipment);
+                        inventory.GiveItem(RoR2Content.Items.AutoCastEquipment, 1);
                         //EquipmentIndex equipmentIndex = Run.instance.availableEquipmentDropList[Run.instance.spawnRng.RangeInt(0, Run.instance.availableEquipmentDropList.Count)].equipmentIndex;
                         EquipmentIndex equipmentIndex = EquipmentCatalog.equipmentList[Run.instance.spawnRng.RangeInt(0, Run.instance.availableEquipmentDropList.Count)];
                         if (!LunarEquips.Value)
                         {
                             for (int i = 0; i < LunarEquipmentList.Length; i++)
                             {
-                                if (equipmentIndex == LunarEquipmentList[i])
+                                if (equipmentIndex == LunarEquipmentList[i].equipmentIndex)
                                 {
                                     equipmentIndex = RoR2Content.Equipment.Fruit.equipmentIndex; // default to fruit.
                                     break;
@@ -867,7 +867,7 @@ namespace Basil_ror2
                 }
                 
                 // Items never used.
-                foreach (ItemIndex item in ItemsNeverUsed)
+                foreach (ItemDef item in ItemsNeverUsed)
                 {
                     inventory.ResetItem(item);
                 }
@@ -926,7 +926,7 @@ namespace Basil_ror2
             }
             if(!BossItems.Value)
             {
-                foreach (ItemIndex index in BossItemList)
+                foreach (ItemDef index in BossItemList)
                 {
                     inventory.ResetItem(index);
                 }
@@ -940,11 +940,11 @@ namespace Basil_ror2
             }
             if (!InheritDio.Value)
             {
-                inventory.ResetItem(RoR2Content.Items.ExtraLife.itemIndex);
+                inventory.ResetItem(RoR2Content.Items.ExtraLife);
             }
             if (!InheritHappiestMask.Value)
             {
-                inventory.ResetItem(RoR2Content.Items.GhostOnKill.itemIndex);
+                inventory.ResetItem(RoR2Content.Items.GhostOnKill);
             }
             float itemMultiplier = ConfigToFloat(ItemMultiplier.Value);
             if (itemMultiplier != 1f)
@@ -973,9 +973,9 @@ namespace Basil_ror2
                 }
                 if (BossItems.Value)
                 {
-                    foreach( ItemIndex index in BossItemList)
+                    foreach(ItemDef item in BossItemList)
                     {
-                        giveResetItem(count, inventory, index, itemMultiplier);
+                        giveResetItem(count, inventory, item.itemIndex, itemMultiplier);
                     }
                 }
                 if (LunarItems.Value)
@@ -1013,9 +1013,9 @@ namespace Basil_ror2
                 }
                 if (BossItems.Value)
                 {
-                    foreach (ItemIndex index in BossItemList)
+                    foreach (ItemDef item in BossItemList)
                     {
-                        giveResetItem(count, inventory, index);
+                        giveResetItem(count, inventory, item.itemIndex);
                     }
                 }
                 if (LunarItems.Value)
@@ -1029,14 +1029,14 @@ namespace Basil_ror2
 
             if (EquipItems.Value)
             {
-                inventory.ResetItem(RoR2Content.Items.AutoCastEquipment.itemIndex);
-                inventory.GiveItem(RoR2Content.Items.AutoCastEquipment.itemIndex, 1);
+                inventory.ResetItem(RoR2Content.Items.AutoCastEquipment);
+                inventory.GiveItem(RoR2Content.Items.AutoCastEquipment, 1);
                 inventory.CopyEquipmentFrom(master.inventory);
                 if (!LunarEquips.Value)
                 {
                     for (int i = 0; i < LunarEquipmentList.Length; i++)
                     {
-                        if (inventory.GetEquipmentIndex() == LunarEquipmentList[i])
+                        if (inventory.GetEquipmentIndex() == LunarEquipmentList[i].equipmentIndex)
                         {
                             cm.inventory.SetEquipmentIndex(RoR2Content.Equipment.Fruit.equipmentIndex); // default to fruit
                             break;
@@ -1046,7 +1046,7 @@ namespace Basil_ror2
             }
 
             // Items that will never be used by the NPCs.
-            foreach (ItemIndex item in ItemsNeverUsed)
+            foreach (ItemDef item in ItemsNeverUsed)
             {
                 cm.inventory.ResetItem(item);
             }
