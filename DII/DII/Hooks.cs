@@ -177,13 +177,7 @@ namespace Basil_ror2
 
                     if (self.bodyPrefab.name.ToString() == "BackupDroneBody")
                     {
-                        self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"),
-                            Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f));
                         self.gameObject.AddComponent<MasterSuicideOnTimer>().lifeTimer = DII.ConfigToFloat(DII.BackupDeathTimer.Value) + UnityEngine.Random.Range(0f, 3f);
-                    }
-                    else
-                    {
-                        self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f));
                     }
                 };
             }

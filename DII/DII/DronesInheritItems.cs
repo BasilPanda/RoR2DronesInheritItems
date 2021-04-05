@@ -782,12 +782,9 @@ namespace Basil_ror2
             InitConfig();
             Hooks.fixBackupDio();
             Hooks.spookyGhosts();
-            //Hooks.titanGold();
-            //Hooks.backupDrones();
-            //Hooks.queensGuard();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v2.6.0 Loaded!");
+            Chat.AddMessage("DronesInheritItems v3.0.0 Loaded!");
         }
 
         public static void checkConfig(CharacterMaster cm, CharacterMaster master)
