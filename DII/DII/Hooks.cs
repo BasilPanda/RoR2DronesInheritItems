@@ -131,9 +131,9 @@ namespace Basil_ror2
                     CustomBlacklist.customItem(cm, DII.CBItemGhosts.Value);
                     CustomBlacklist.customItemCap(cm, DII.CBItemCapGhosts.Value);
                     CustomBlacklist.customEquip(cm, DII.CBEquipGhosts.Value);
-                    cm.inventory.GiveItem(ItemIndex.Ghost, 1);
-                    cm.inventory.ResetItem(ItemIndex.HealthDecay);
-                    cm.inventory.GiveItem(ItemIndex.HealthDecay, duration);
+                    cm.inventory.GiveItem(RoR2Content.Items.Ghost.itemIndex, 1);
+                    cm.inventory.ResetItem(RoR2Content.Items.HealthDecay.itemIndex);
+                    cm.inventory.GiveItem(RoR2Content.Items.HealthDecay.itemIndex, duration);
                     return characterBody;
                 };
             }
@@ -200,7 +200,7 @@ namespace Basil_ror2
                     if (DII.BackupDronesInherit.Value && masterObjectPrefab.name == "DroneBackupMaster" && characterMaster != null)
                     {
                         DII.checkConfig(characterMaster, characterMaster.gameObject.GetComponent<AIOwnership>().ownerMaster);
-                        characterMaster.inventory.ResetItem(ItemIndex.AutoCastEquipment);
+                        characterMaster.inventory.ResetItem(RoR2Content.Items.AutoCastEquipment.itemIndex);
                     }
                     return characterMaster;
                 };
@@ -251,9 +251,8 @@ namespace Basil_ror2
                 //CharacterMaster player = PlayerCharacterMasterController.instances[rand.Next(0, Run.instance.livingPlayerCount)].master;
                 CharacterMaster player = spawnResult.spawnRequest.summonerBodyObject.GetComponent<CharacterBody>().master;
                 DII.checkConfig(squidy, player);
-                if(DII.FixSquid.Value)
                 {
-                    squidy.inventory.GiveItem(ItemIndex.HealthDecay,(int)Math.Ceiling(DII.ConfigToFloat(DII.SquidHealthDecay.Value)));
+                    squidy.inventory.GiveItem(RoR2Content.Items.HealthDecay.itemIndex,(int)Math.Ceiling(DII.ConfigToFloat(DII.SquidHealthDecay.Value)));
                 }
             }
             
@@ -281,7 +280,7 @@ namespace Basil_ror2
                         DII.checkConfig(characterMaster, master);
                         if(self.masterPrefab.name == "Drone2Master" || self.masterPrefab.name == "Emer")
                         {
-                            characterMaster.inventory.ResetItem(ItemIndex.LunarPrimaryReplacement);
+                            characterMaster.inventory.ResetItem(RoR2Content.Items.LunarPrimaryReplacement.itemIndex);
                         }
                     }
                 }
@@ -301,12 +300,12 @@ namespace Basil_ror2
                     if (self.bodyPrefab.name.ToString() == "BackupDroneBody")
                     {
                         self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"),
-                            Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), false);
+                            Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f));
                         self.gameObject.AddComponent<MasterSuicideOnTimer>().lifeTimer = DII.ConfigToFloat(DII.BackupDeathTimer.Value) + UnityEngine.Random.Range(0f, 3f);
                     }
                     else
                     {
-                        self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f), false);
+                        self.Respawn(self.GetFieldValue<Vector3>("deathFootPosition"), Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f));
                     }
                 };
             }
