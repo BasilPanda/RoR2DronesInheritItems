@@ -7,7 +7,7 @@ using System;
 namespace Basil_ror2
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "3.0.0")]
+    [BepInPlugin("com.Basil.DronesInheritItems", "DronesInheritItems", "3.0.1")]
     public class DII : BaseUnityPlugin
     {
         #region General Config Wrappers
@@ -496,21 +496,21 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CustomItemBlacklistAll",
                 "",
-                "Enter items ids or code names separated by a comma and a space to blacklist inheritance/generation on certain items. ex) 41, 23, 17 \nItem ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
+                "Enter item code names separated by a comma and a space to blacklist inheritance/generation on certain items. ex) PersonalShield, Syringe\nItem names: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
                 );
 
             CustomEquipBlacklistAll = Config.Bind(
                 "Blacklist Settings",
                 "CustomEquipBlacklistAll",
                 "",
-                "Enter equipment ids or code names separated by a comma and a space to blacklist inheritance/generation on certain equips. ex) 1, 14, 13 \nEquip ids: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
+                "Enter equipment code names separated by a comma and a space to blacklist inheritance/generation on certain equips. ex) Saw, DroneBackup\nEquip names: https://github.com/risk-of-thunder/R2Wiki/wiki/Item-&-Equipment-IDs-and-Names"
                 );
 
             CustomItemCapsAll = Config.Bind(
                 "Blacklist Settings",
                 "CustomItemCapsAll",
                 "",
-                "Enter item ids or code names as X-Y separated by a comma and a space to apply caps to certain items. X is the item id and Y is the number cap. ex) 0-20, 1-5, 2-1"
+                "Enter item code names as X-Y separated by a comma and a space to apply caps to certain items. X is the item id and Y is the number cap. ex) PersonalShield-20, Syringe-5"
                 );
 
             #endregion All Settings
@@ -521,14 +521,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemSquid",
                 "",
-                "Blacklist items targeting squid turrets. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting squid turrets. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapSquid = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapSquid",
                 "",
-                "Cap items for squid turrets. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for squid turrets. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Squid
@@ -539,14 +539,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemMinigun",
                 "",
-                "Blacklist items targeting minigun turrets. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting minigun turrets. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapMinigun = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapMinigun",
                 "",
-                "Cap items for minigun turrets. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for minigun turrets. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Minigun Turret
@@ -557,14 +557,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemGunnerDrone",
                 "",
-                "Blacklist items targeting gunner drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting gunner drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapGunnerDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapGunnerDrone",
                 "",
-                "Cap items for gunner drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for gunner drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Gunner Drone
@@ -575,14 +575,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemHealDrone",
                 "",
-                "Blacklist items targeting heal drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting heal drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapHealDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapHealDrone",
                 "",
-                "Cap items for heal drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for heal drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Heal Drone
@@ -593,14 +593,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemMegaDrone",
                 "",
-                "Blacklist items targeting TC-280 drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting TC-280 drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapMegaDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapMegaDrone",
                 "",
-                "Cap items for TC-280 drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for TC-280 drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Mega Drone
@@ -611,14 +611,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemMissileDrone",
                 "",
-                "Blacklist items targeting missile drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting missile drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapMissileDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapMissileDrone",
                 "",
-                "Cap items for missile drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for missile drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Missile Drone
@@ -629,14 +629,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemFlameDrone",
                 "",
-                "Blacklist items targeting flame drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting flame drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapFlameDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapFlameDrone",
                 "",
-                "Cap items for flame drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for flame drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Flame Drone
@@ -647,14 +647,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemBackup",
                 "",
-                "Blacklist items targeting The Backup drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting The Backup drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapBackup = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapBackup",
                 "",
-                "Cap items for The Backup drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for The Backup drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Flame Drone
@@ -665,14 +665,14 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemEmergencyDrone",
                 "",
-                "Blacklist items targeting emergency drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting emergency drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBItemCapEmergencyDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapEmergencyDrone",
                 "",
-                "Cap items for emergency drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for emergency drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Emergency Drone
@@ -682,21 +682,21 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemEquipDrone",
                 "",
-                "Blacklist items targeting equipment drones. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting equipment drones. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBEquipEquipDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBEquipEquipDrone",
                 "",
-                "Blacklist equips targeting equipment drones. Enter equip ids the same way as CustomEquipBlacklistAll."
+                "Blacklist equips targeting equipment drones. Enter equip codenames the same way as CustomEquipBlacklistAll."
                 );
 
             CBItemCapEquipDrone = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapEquipDrone",
                 "",
-                "Cap items for equipment drones. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for equipment drones. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Equip Drone
@@ -707,21 +707,21 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemQueensGuard",
                 "",
-                "Blacklist items targeting queen guards. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting queen guards. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBEquipQueensGuard = Config.Bind(
                 "Blacklist Settings",
                 "CBEquipQueensGuard",
                 "",
-                "Blacklist equips targeting queen guards. Enter equip ids the same way as CustomEquipBlacklistAll."
+                "Blacklist equips targeting queen guards. Enter equip codenames the same way as CustomEquipBlacklistAll."
                 );
 
             CBItemCapQueensGuard = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapQueensGuard",
                 "",
-                "Cap items for queen guards. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for queen guards. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion QueensGuard
@@ -732,21 +732,21 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemTitan",
                 "",
-                "Blacklist items targeting Aurelionite. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting Aurelionite. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBEquipTitan = Config.Bind(
                 "Blacklist Settings",
                 "CBEquipTitan",
                 "",
-                "Blacklist equips targeting Aurelionite. Enter equip ids the same way as CustomEquipBlacklistAll."
+                "Blacklist equips targeting Aurelionite. Enter equip codenames the same way as CustomEquipBlacklistAll."
                 );
 
             CBItemCapTitan = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapTitan",
                 "",
-                "Cap items for Aurelionite. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for Aurelionite. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Titan
@@ -757,21 +757,21 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemGhosts",
                 "",
-                "Blacklist items targeting Ghosts. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting Ghosts. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBEquipGhosts = Config.Bind(
                 "Blacklist Settings",
                 "CBEquipGhosts",
                 "",
-                "Blacklist equips targeting Ghosts. Enter equip ids the same way as CustomEquipBlacklistAll."
+                "Blacklist equips targeting Ghosts. Enter equip codenames the same way as CustomEquipBlacklistAll."
                 );
 
             CBItemCapGhosts = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapGhosts",
                 "",
-                "Cap items for Ghosts. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for Ghosts. Enter codenames the same way as CustomItemCapsAll."
                 );
 
             #endregion Ghosts
@@ -782,21 +782,21 @@ namespace Basil_ror2
                 "Blacklist Settings",
                 "CBItemSolus",
                 "",
-                "Blacklist items targeting Solus Probes. Enter item ids the same way as CustomItemBlacklistAll."
+                "Blacklist items targeting Solus Probes. Enter item codenames the same way as CustomItemBlacklistAll."
                 );
 
             CBEquipSolus = Config.Bind(
                 "Blacklist Settings",
                 "CBEquipSolus",
                 "",
-                "Blacklist equips targeting Solus Probes. Enter equip ids the same way as CustomEquipBlacklistAll."
+                "Blacklist equips targeting Solus Probes. Enter equip codenames the same way as CustomEquipBlacklistAll."
                 );
 
             CBItemCapSolus = Config.Bind(
                 "Blacklist Settings",
                 "CBItemCapSolus",
                 "",
-                "Cap items for Solus Probes. Enter ids the same way as CustomItemCapsAll."
+                "Cap items for Solus Probes. Enter codenames the same way as CustomItemCapsAll."
                 );
             #endregion
 
@@ -820,7 +820,7 @@ namespace Basil_ror2
             Hooks.spookyGhosts();
             Hooks.baseMod();
             Hooks.updateAfterStage();
-            Chat.AddMessage("DronesInheritItems v3.0.0 Loaded!");
+            Chat.AddMessage("DronesInheritItems v3.0.1 Loaded!");
         }
 
         public static void checkConfig(CharacterMaster npc, CharacterMaster player)

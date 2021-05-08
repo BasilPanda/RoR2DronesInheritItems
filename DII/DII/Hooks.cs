@@ -201,6 +201,7 @@ namespace Basil_ror2
                 {
                     orig(self);
 
+                    Debug.Log(self.bodyPrefab.name);
                     if (self.bodyPrefab.name.ToString() == "BackupDroneBody")
                     {
                         self.gameObject.AddComponent<MasterSuicideOnTimer>().lifeTimer = DII.ConfigToFloat(DII.BackupDeathTimer.Value) + UnityEngine.Random.Range(0f, 3f);
@@ -212,6 +213,7 @@ namespace Basil_ror2
         // Check keys and add to inventory
         public static void masterKeyHandler(CharacterMaster npc, CharacterMaster player)
         {
+            Debug.Log(npc.name);
             if (masterPrefabNamesSummonReturn.Keys.Contains(npc.name))
             {
                 if (masterPrefabNamesSummonReturn[npc.name])

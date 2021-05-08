@@ -57,6 +57,10 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 
 ## Changelog
 
+**v3.0.1**
+
+- Updated for R2API v3.0.30
+
 **v3.0.0**
 
 - Updated for the 1 Year Anniversary update.
@@ -74,7 +78,7 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 
 **v2.4.15**
 
-- Updated for 2.5.14 R2API
+- Updated for R2API v2.5.14
 - Fixed softlocking issue w/ update items option and TC-280s.
 - Added back the 1.0 item cooldown to equipment drones.
 - Added boss item related config.
@@ -84,7 +88,7 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 **v2.4.14**
 
 - Updated for v1.0 of the game!
-- Updated for 2.5.7 R2API.
+- Updated for R2API v2.5.7
 - Permanently blacklisted Visions of Heresy on Emergency Drones.
 - Fixed multiplayer latency issues. Thanks to @terribleperson#7284 for reporting it!
 
