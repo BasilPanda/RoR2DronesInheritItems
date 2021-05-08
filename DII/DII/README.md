@@ -53,9 +53,14 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 
 ## Known Bugs
 
-- None at the moment!
+- Inherited dios on ally Heretics will not work properly and stay on UI after death
 
 ## Changelog
+
+**v3.0.2**
+
+- Changed config text for blacklisting items to use codenames instead of ids.
+- Known issue: Inherited dios on ally Heretics will not work properly and stay on UI after death
 
 **v3.0.1**
 
