@@ -57,6 +57,10 @@ A: Currently working a full time office job and modding is a hobby. I'll update 
 
 ## Changelog
 
+**v3.0.3**
+
+-Updated for Survivors of the Void
+
 **v3.0.0**
 
 - Updated for the 1 Year Anniversary Patch.
